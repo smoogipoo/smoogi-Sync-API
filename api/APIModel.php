@@ -129,42 +129,42 @@ abstract class API
 	private function CreateAccount($args)
 	{
 		if ($this->method !== 'POST')
-			return $this->generateError(APIErrors::E_INVALIDREQUESTTYPE, "Expected POST request type.");
+			return $this->generateError(APIErrors::E_INVALIDREQUESTTYPE, "Expected POST request type, received " . $this->method . '.');
 
-		if (isset($_POST['username'])
-			&& isset($_POST['password'])
-			&& isset($_POST['email']))
+		if (!isset($_POST['username'])
+			|| !isset($_POST['password'])
+			|| !isset($_POST['email']))
 		{
-			if (!isset($_POST['service']))
-				return $this->generateError(APIErrors::E_NOSERVICE, "No service requested.");
+			return $this->generateError(APIErrors::E_NOCREDENTIALS, "Incomplete credentials given.");
+		}
 
-			if ($_POST['username'] === "" || $_POST['password'] === "")
-				return $this->generateError(APIErrors::E_EMPTYCREDENTIALS, "Empty credentials entered.");
+		if (!isset($_POST['service']))
+			return $this->generateError(APIErrors::E_NOSERVICE, "No service requested.");
 
-			if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))
-				return $this->generateError(APIErrors::E_INVALIDEMAIL, "Invalid email address provided.");
+		if ($_POST['username'] === "" || $_POST['password'] === "")
+			return $this->generateError(APIErrors::E_EMPTYCREDENTIALS, "Empty credentials entered.");
 
-			$found = $this->instance->SelectRows("users", array("username" => $_POST['username']));
+		if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))
+			return $this->generateError(APIErrors::E_INVALIDEMAIL, "Invalid email address provided.");
 
-			if (mysql_num_rows($found) == 0)
-			{
-				$result = $this->instance->InsertRows("users", array
-					(
-						"username" => $_POST['username'],
-						"password" => $_POST['password'],
-						"email"    => $_POST['email']
-					));
+		$found = $this->instance->SelectRows("users", array("username" => $_POST['username']));
 
-				if (!$result)
-					return $this->generateError(APIErrors::E_NORETURN, "Unable to create account.");
-				
-				return "User account created: " . $_POST['username'];
-			}
-			else
-				return $this->generateError(APIErrors::E_USEREXISTS, "User already exists.");
+		if (mysql_num_rows($found) == 0)
+		{
+			$result = $this->instance->InsertRows("users", array
+				(
+					"username" => $_POST['username'],
+					"password" => $_POST['password'],
+					"email"    => $_POST['email']
+				));
+
+			if (!$result)
+				return $this->generateError(APIErrors::E_NORETURN, "Unable to create account.");
+			
+			return "User account created: " . $_POST['username'];
 		}
 		else
-			return $this->generateError(APIErrors::E_NOCREDENTIALS, "Unable to create account.");
+			return $this->generateError(APIErrors::E_USEREXISTS, "User already exists.");
 	}
 
 	private function Login()
