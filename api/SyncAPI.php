@@ -3,6 +3,7 @@
 require 'APIModel.php';
 require 'Helpers/MysqlHelper.php';
 require 'Schemas/Schema_Sync.php';
+require 'Helpers/RNG.php';
 
 class SyncAPI extends API
 {
@@ -23,7 +24,7 @@ try
 
 	if (!isset($_REQUEST['service']))
 		return;
-	
+
 	switch (strtolower($_REQUEST['service']))
 	{
 		case "sync":

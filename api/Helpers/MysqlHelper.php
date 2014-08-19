@@ -52,7 +52,7 @@ class MYSQLInstance
 		return mysql_query($sql, $this->Connection);
 	}
 
-	public function SelectRows($table, array $search, $multiple = false)
+	public function SelectRows($table, array $search)
 	{
 		$this->ensureConnected();
 
@@ -65,13 +65,7 @@ class MYSQLInstance
 			$multiSearchString .= $this->escapeString($k) . "=" . "'" . $this->escapeString($v) . "'";
 		}
 
-		$searchAmount = '1';
-
-		if ($multiple)
-			$searchAmount = '*';
-
-		$sql = sprintf("SELECT %s FROM %s%s WHERE %s;"
-						, $searchAmount
+		$sql = sprintf("SELECT * FROM %s%s WHERE %s;"
 						, $this->schema->DB_PREFIX
 						, $this->escapeString($table)
 						, $multiSearchString);
@@ -79,26 +73,20 @@ class MYSQLInstance
 		return mysql_query($sql, $this->Connection);
 	}
 
-	public function SelectRowsLimit($table, array $search, $multiple = true, $start, $count = 0)
+	public function SelectRowsLimit($table, array $search, $start, $count = 0)
 	{
 		$this->ensureConnected();
 
 		$multiSearchString = '';
 
-		foreach ($contents as $k => $v)
+		foreach ($search as $k => $v)
 		{
 			if ($multiSearchString !== '')
 				$multiSearchString .= " AND ";
 			$multiSearchString .= $this->escapeString($k) . "=" . "'" . $this->escapeString($v) . "'";
 		}
 
-		$searchAmount = '*';
-
-		if (!$multiple)
-			$searchAmount = '1';
-
-		$sql = sprintf("SELECT %s FROM %s%s WHERE %s LIMIT %s;"
-						, $searchAmount
+		$sql = sprintf("SELECT * FROM %s%s WHERE %s LIMIT %s;"
 						, $this->schema->DB_PREFIX
 						, $this->escapeString($table)
 						, $multiSearchString
@@ -113,7 +101,7 @@ class MYSQLInstance
 
 		$multiSearchString = '';
 
-		foreach ($contents as $k => $v)
+		foreach ($search as $k => $v)
 		{
 			if ($multiSearchString !== '')
 				$multiSearchString .= " AND ";

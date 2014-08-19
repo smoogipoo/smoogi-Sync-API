@@ -14,6 +14,13 @@ abstract class APIErrors extends API
 	const E_NORETURN			= -1;
 }
 
+abstract class APIResults extends API
+{
+	const R_USERACCOUNTCREATED	= 400;
+	const R_TOKENCALLBACK		= 401;
+	const R_LOGOUTSUCCESS		= 402;
+}
+
 abstract class API
 {
 	private $method = '';
@@ -102,12 +109,22 @@ abstract class API
 		return json_encode($response);
 	}
 
-	private function generateError($error,$description = "")
+	private function generateError($error, $description = "")
 	{
 		$ret = array
 		(
-			"Description" => $description,
-			"ErrorCode"   => $error
+			"ErrorCode"   => $error,
+			"Description" => $description
+		);
+		return $ret;
+	}
+
+	private function generateResponse($response, $description = "")
+	{
+		$ret = array
+		(
+			"ResponseCode"	=> $response,
+			"Description" 	=> $description,
 		);
 		return $ret;
 	}
@@ -126,7 +143,7 @@ abstract class API
 			: $status[500];
 	}
 
-	private function CreateAccount($args)
+	private function CreateAccount()
 	{
 		if ($this->method !== 'POST')
 			return $this->generateError(APIErrors::E_INVALIDREQUESTTYPE, "Expected POST request type, received " . $this->method . '.');
@@ -137,9 +154,6 @@ abstract class API
 		{
 			return $this->generateError(APIErrors::E_NOCREDENTIALS, "Incomplete credentials given.");
 		}
-
-		if (!isset($_POST['service']))
-			return $this->generateError(APIErrors::E_NOSERVICE, "No service requested.");
 
 		if ($_POST['username'] === "" || $_POST['password'] === "")
 			return $this->generateError(APIErrors::E_EMPTYCREDENTIALS, "Empty credentials entered.");
@@ -161,7 +175,7 @@ abstract class API
 			if (!$result)
 				return $this->generateError(APIErrors::E_NORETURN, "Unable to create account.");
 			
-			return "User account created: " . $_POST['username'];
+			return $this->generateResponse(APIResults::R_USERACCOUNTCREATED, $_POST['username']);
 		}
 		else
 			return $this->generateError(APIErrors::E_USEREXISTS, "User already exists.");
@@ -169,7 +183,72 @@ abstract class API
 
 	private function Login()
 	{
+		if ($this->method !== 'GET')
+			return $this->generateError(APIErrors::E_INVALIDREQUESTTYPE, "Expected GET request type, received " . $this->method . '.');
+
+		if (!isset($_GET['username'])
+			|| !isset($_GET['password']))
+		{
+			return $this->generateError(APIErrors::E_NOCREDENTIALS, "Incomplete credentials given.");
+		}
+
+		$found = $this->instance->SelectRows("users", array
+		(
+			"username" => $_GET['username'],
+			"password" => $_GET['password']
+		));
+
+		if (mysql_num_rows($found) == 0)
+			return $this->generateError(APIErrors::E_INVALIDCRETENDTIALS, "Wrong username/password.");
+
+		$currentExisting = $this->instance->SelectRows("users_loggedin", array
+		(
+			"username" => $_GET['username']
+		));
+
+		if (mysql_num_rows($currentExisting) == 0)
+		{
+			$tok = RNG::FixedString(32, RNG::ALPHANUMERICAL);
+			$this->instance->InsertRows("users_loggedin", array
+			(
+				"username" 	=> $_GET['username'],
+				"token" 	=> $tok
+			));
+
+			return $tok;
+		}
+		else
+		{
+			return $this->generateResponse(APIResults::R_TOKENCALLBACK, mysql_fetch_array($currentExisting)['token']);
+		}
+
 		return $this->generateError(APIErrors::E_NORETURN);
+	}
+
+	private function Logout()
+	{
+		if ($this->method !== 'POST')
+			return $this->generateError(APIErrors::E_INVALIDREQUESTTYPE, "Expected POST request type, received " . $this->method . '.');
+
+		if (!isset($_POST['token']))
+			return $this->generateError(APIErrors::E_INVALIDTOKEN, "No token provided.");
+
+		$found = $this->instance->SelectRows("users_loggedin", array
+		(
+			'token' => $_POST['token']
+		));
+
+		if (mysql_num_rows($found) != 0)
+		{
+			$this->instance->DeleteRows("users_loggedin", array
+			(
+				'token' => $_POST['token']
+			));
+
+			return $this->generateResponse(APIResults::R_LOGOUTSUCCESS);
+		}
+		else
+			return $this->generateError(APIErrors::E_INVALIDTOKEN, $_POST['token']);
 	}
 }
 

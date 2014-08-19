@@ -9,17 +9,23 @@ class SyncSchema implements Schema
 
 	private $usersTable = array
 	(
-		"username"    => "VARCHAR(100)",
-		"password"    => "VARCHAR(256)",
-		"email"       => "VARCHAR(254)",
-		"lastlogin"   => "DATE",
+		"username"		=> "VARCHAR(100)",
+		"password"		=> "VARCHAR(256)",
+		"email"			=> "VARCHAR(254)",
+		"lastlogin"		=> "DATE",
+	);
+
+	private $loggedInUsersTable = array
+	(
+		"username"		=> "VARCHAR(100)",
+		"token"			=> "VARCHAR(32)"
 	);
 
 	private $fileListTable = array
 	(
-		"filename"     => "VARCHAR(255)",
-		"lastmodified" => "DATE",
-		"hash"         => "VARCHAR(256)",
+		"filename"		=> "VARCHAR(255)",
+		"lastmodified"	=> "DATE",
+		"hash"			=> "VARCHAR(256)",
 	);
 
 	public function CreateSchema($database)
@@ -27,8 +33,9 @@ class SyncSchema implements Schema
 		mysql_query("CREATE DATABASE IF NOT EXISTS $this->DB_NAME;", $database);
 		mysql_select_db($this->DB_NAME);
 
-		//Create the users table
+		//Create the users tables
 		mysql_query($this->GenerateCreateTableQuery('Users', $this->usersTable), $database);
+		mysql_query($this->GenerateCreateTableQuery('Users_LoggedIn', $this->loggedInUsersTable), $database);
 
 		//Create the FileList table
 		mysql_query($this->GenerateCreateTableQuery('FileList', $this->fileListTable), $database);
