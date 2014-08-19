@@ -19,8 +19,20 @@ if (!array_key_exists('HTTP_ORIGIN', $_SERVER))
 
 try
 {
-	$API = new SyncAPI($_REQUEST['req']);
-	echo $API->ProcessRequest();
+	$API = null;
+
+	if (!isset($_REQUEST['service']))
+		return;
+	
+	switch (strtolower($_REQUEST['service']))
+	{
+		case "sync":
+			$API = new SyncAPI($_REQUEST['req']);
+			break;
+	}
+
+	if ($API != null)
+		echo $API->ProcessRequest();
 }
 catch (Exception $e)
 {
