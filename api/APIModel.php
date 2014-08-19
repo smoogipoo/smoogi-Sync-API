@@ -102,12 +102,12 @@ abstract class API
 		return json_encode($response);
 	}
 
-	private function generateError($description, $status)
+	private function generateError($error,$description = "")
 	{
 		$ret = array
 		(
 			"Description" => $description,
-			"ErrorCode"   => $status
+			"ErrorCode"   => $error
 		);
 		return $ret;
 	}
@@ -129,20 +129,20 @@ abstract class API
 	private function CreateAccount($args)
 	{
 		if ($this->method !== 'POST')
-			return $this->generateError("Expected POST request type.", APIErrors::E_INVALIDREQUESTTYPE);
+			return $this->generateError(APIErrors::E_INVALIDREQUESTTYPE, "Expected POST request type.");
 
 		if (isset($_POST['username'])
 			&& isset($_POST['password'])
 			&& isset($_POST['email']))
 		{
 			if (!isset($_POST['service']))
-				return $this->generateError("No service requested.", APIErrors::E_NOSERVICE);
+				return $this->generateError(APIErrors::E_NOSERVICE, "No service requested.");
 
 			if ($_POST['username'] === "" || $_POST['password'] === "")
-				return $this->generateError("Empty credentials entered.", APIErrors::E_EMPTYCREDENTIALS);
+				return $this->generateError(APIErrors::E_EMPTYCREDENTIALS, "Empty credentials entered.");
 
 			if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))
-				return $this->generateError("Invalid email address provided.", APIErrors::E_INVALIDEMAIL);
+				return $this->generateError(APIErrors::E_INVALIDEMAIL, "Invalid email address provided.");
 
 			$found = $this->instance->SelectRows("users", array("username" => $_POST['username']));
 
@@ -156,20 +156,20 @@ abstract class API
 					));
 
 				if (!$result)
-					return $this->generateError("Unable to create account. MYSQL:" . mysql_error(), APIErrors::E_NORETURN);
+					return $this->generateError(APIErrors::E_NORETURN, "Unable to create account.");
 				
 				return "User account created: " . $_POST['username'];
 			}
 			else
-				return $this->generateError("User already exists.", APIErrors::E_USEREXISTS);
+				return $this->generateError(APIErrors::E_USEREXISTS, "User already exists.");
 		}
 		else
-			return $this->generateError("Unable to create account.", APIErrors::E_NOCREDENTIALS);
+			return $this->generateError(APIErrors::E_NOCREDENTIALS, "Unable to create account.");
 	}
 
 	private function Login()
 	{
-		return APIErrors::E_NORETURN;
+		return $this->generateError(APIErrors::E_NORETURN);
 	}
 }
 
