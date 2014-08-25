@@ -7,7 +7,7 @@ class MYSQLInstance
 	public $Connection;
 	public $schema;
 
-	public function __construct($schema)
+	public function __construct(Schema $schema)
 	{
 		if (gettype($schema) != 'object')
 			throw new Exception("Invalid schema object.");

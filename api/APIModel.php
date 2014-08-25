@@ -31,15 +31,13 @@ abstract class API
 
 	private $args = array();
 
-	private $parameters = array();
-
 	private $file = null;
 
-	private $connection;
+	protected $connection;
 
 	private $instance;
 
-	public function __construct($request, $instance)
+	public function __construct($request, MYSQLInstance $instance)
 	{
 		$this->instance = $instance;
 

@@ -47,7 +47,7 @@ class SyncSchema implements Schema
 	* $rows is an array type of name => type.
 	* Ex: $rows = array("Name" => "VARCHAR(50)");
 	*/
-	private function GenerateCreateTableQuery($table, $rows)
+    private function GenerateCreateTableQuery($table, $rows)
 	{
 		$tableQuery = "CREATE TABLE IF NOT EXISTS $this->DB_PREFIX" . "$table (id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (id)";
 
@@ -55,14 +55,14 @@ class SyncSchema implements Schema
 			$tableQuery .= ', ' . $k . ' ' . $v;
 		$tableQuery .= ');';
 
-		return $tableQuery;	
+		return $tableQuery;
 	}
 
-	/*
-	* Generate a MYSQL query to add a foreign key to $table.
-	* $keyReference must be passed as TName(TKey)
-	*/
-	private function GenerateCreateForeignKeyQuery($table, $keyName, $keyReference)
+    /*
+    * Generate a MYSQL query to add a foreign key to $table.
+    * $keyReference must be passed as TName(TKey)
+    */
+    private function GenerateCreateForeignKeyQuery($table, $keyName, $keyReference)
 	{
 		$tableQuery = "IF NOT EXISTS (SELECT NULL FROM information_schema.TABLE_CONSTRAINTS WHERE " .
 			"CONSTRAINT_SCHEMA = DATABASE() AND " .
