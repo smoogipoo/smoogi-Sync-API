@@ -39,7 +39,7 @@ class SyncSchema extends Schema
 
         //Create the FileList table
         mysql_query($this->generateCreateTableQuery('FileList', $this->fileListTable), $database);
-        mysql_query($this->GenerateCreateForeignKeyQuery('FileList', 'user_id', '`Users`(`id`)'), $database);
+        mysql_query($this->generateCreateForeignKeyQuery('FileList', 'user_id', '`Users`(`id`)'), $database);
     }
 }
 
