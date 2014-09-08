@@ -1,5 +1,5 @@
 <?php
-require 'Helpers/Response/ResponseFactory.php';
+require 'Helpers/Responses/ResponseFactory.php';
 require 'Helpers/MYSQL/MysqlHelper.php';
 
 abstract class API
