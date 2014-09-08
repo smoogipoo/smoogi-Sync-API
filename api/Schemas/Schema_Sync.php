@@ -18,7 +18,8 @@ class SyncSchema implements Schema
 	private $loggedInUsersTable = array
 	(
 		"username"		=> "VARCHAR(100)",
-		"token"			=> "VARCHAR(32)"
+		"token"			=> "VARCHAR(32)",
+        "tokenissued"   => "INT UNSIGNED"
 	);
 
 	private $fileListTable = array

@@ -23,15 +23,15 @@ abstract class APIResults extends API
 
 abstract class API
 {
-	private $method = '';
+	protected $method = '';
 
 	private $endpt = '';
 
 	private $verb = '';
 
-	private $args = array();
+	protected $args = array();
 
-	private $file = null;
+	protected $file = null;
 
 	protected $connection;
 
@@ -204,23 +204,28 @@ abstract class API
 			"username" => $_GET['username']
 		));
 
-		if (mysql_num_rows($currentExisting) == 0)
+        $arr = mysql_fetch_array($currentExisting);
+        $rowCount = mysql_num_rows($currentExisting);
+        if ($rowCount != 0 && (time() - $arr['tokenissued']) > 86400)
+        {
+            //Expire token after 24 hours
+            $this->instance->DeleteRows("users_loggedin", array( "token" => $arr['token']));
+        }
+
+		if ($rowCount == 0)
 		{
 			$tok = RNG::FixedString(32, RNG::ALPHANUMERICAL);
 			$this->instance->InsertRows("users_loggedin", array
 			(
 				"username" 	=> $_GET['username'],
-				"token" 	=> $tok
+				"token" 	=> $tok,
+                "tokenissued" => time()
 			));
 
 			return $tok;
 		}
 		else
-		{
 			return $this->generateResponse(APIResults::R_TOKENCALLBACK, mysql_fetch_array($currentExisting)['token']);
-		}
-
-		return $this->generateError(APIErrors::E_NORETURN);
 	}
 
 	private function Logout()
