@@ -36,8 +36,8 @@ class ResponseFactory
         $okstatus = $ok == 1 ? true : false;
         $ret = array
         (
-            'OK'            => $okstatus,
-            'Response'	    => $response,
+            'OK' => $okstatus,
+            'Response' => $response,
         );
         if (!empty($data))
             $ret['Data'] = $data;

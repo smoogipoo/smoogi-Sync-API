@@ -67,7 +67,7 @@ abstract class API
             (
                 'username' => $_POST['username'],
                 'password' => $_POST['password'],
-                'email'    => $_POST['email']
+                'email' => $_POST['email']
             ));
 
             if (!$result)
@@ -149,8 +149,8 @@ abstract class API
             $tok = RNG::FixedString(32, RNG::ALPHANUMERICAL);
             $this->Database->InsertRows('users_loggedin', array
             (
-                'username' 	=> $_GET['username'],
-                'token' 	=> $tok,
+                'username' => $_GET['username'],
+                'token' => $tok,
                 'tokenissued' => time()
             ));
         }
