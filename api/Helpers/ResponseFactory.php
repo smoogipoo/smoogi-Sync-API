@@ -9,7 +9,7 @@ class ResponseFactory
         return json_encode($response);
     }
 
-    public static function RequestStatus($code)
+    private static function RequestStatus($code)
     {
         $status = array
         (
