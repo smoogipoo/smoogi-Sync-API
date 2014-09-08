@@ -43,10 +43,10 @@ class SyncSchema implements Schema
 	}
 
 	/*
-	* Generate a MYSQL create table string with the requested $table name containing $rows rows.
-	* $rows is an array type of name => type.
-	* Ex: $rows = array("Name" => "VARCHAR(50)");
-	*/
+	 * Generate a MYSQL create table string with the requested $table name containing $rows rows.
+	 * $rows is an array type of name => type.
+	 * Ex: $rows = array("Name" => "VARCHAR(50)");
+	 */
     private function GenerateCreateTableQuery($table, $rows)
 	{
 		$tableQuery = "CREATE TABLE IF NOT EXISTS $this->DB_PREFIX" . "$table (id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (id)";
@@ -59,9 +59,9 @@ class SyncSchema implements Schema
 	}
 
     /*
-    * Generate a MYSQL query to add a foreign key to $table.
-    * $keyReference must be passed as TName(TKey)
-    */
+     * Generate a MYSQL query to add a foreign key to $table.
+     * $keyReference must be passed as TName(TKey)
+     */
     private function GenerateCreateForeignKeyQuery($table, $keyName, $keyReference)
 	{
 		$tableQuery = "IF NOT EXISTS (SELECT NULL FROM information_schema.TABLE_CONSTRAINTS WHERE " .

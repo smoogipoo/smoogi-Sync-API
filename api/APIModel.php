@@ -4,23 +4,15 @@ require 'Helpers/MysqlHelper.php';
 
 abstract class API
 {
-	protected $method = '';
-
+	public $Method = '';
+    public $Database;
 	private $endpt = '';
-
 	private $verb = '';
-
-	protected $args = array();
-
-	protected $file = null;
-
-	protected $connection;
-
-	private $instance;
+	private $args = array();
 
 	public function __construct($request, MYSQLInstance $instance)
 	{
-		$this->instance = $instance;
+		$this->Database = $instance;
 
 		header("Access-Control-Allow-Origin: *");
 		header("Access-Control-Allow-Methods: *");
@@ -31,34 +23,7 @@ abstract class API
 		if (count($this->args) > 0 && !is_numeric($this->args[0]))
 			$this->verb = array_shift($this->args);
 
-		$this->method = $_SERVER['REQUEST_METHOD'];
-		if ($this->method == 'POST' && array_key_exists('HTTP_X_HTTP_METHOD', $_SERVER))
-		{
-			if ($_SERVER['HTTP_X_HTTP_METHOD'] == 'DELETE')
-				$this->method = 'DELETE';
-			else if ($_SERVER['HTTP_X_HTTP_METHOD'] == 'PUT')
-				$this->method = 'PUT';
-			else
-				$this->method = 'ERR';
-		}
-
-		switch ($this->method)
-		{
-			case 'POST':
-			case 'DELETE':
-				$this->request = $this->cleanRequest($_POST);
-				break;
-			case 'GET':
-				$this->request = $this->cleanRequest($_GET);
-				break;
-			case 'PUT':
-				$this->request = $this->cleanRequest($_GET);
-				$this->file = file_get_contents("php://input");
-				break;
-			default:
-				ResponseFactory::SendResponse('Invalid Method', 405);
-				break;
-		}
+		$this->Method = $_SERVER['REQUEST_METHOD'];
 	}
 
 	public function ProcessRequest()
@@ -70,29 +35,16 @@ abstract class API
             {
                 return ResponseFactory::SendResponse($this->{$this->endpt}());
             }
-			return ResponseFactory::SendResponse($this->IsLoggedIn($this->endpt));
+			return ResponseFactory::SendResponse($this->isLoggedIn($this->endpt));
         }
 		return ResponseFactory::SendResponse("Endpoint does not exist: $this->endpt", 404);
 	}
 
-	private function cleanRequest($data)
-	{
-		$clean_data = Array();
-		if (is_array($data))
-		{
-			foreach ($data as $k => $v)
-				$clean_data[$k] = $this->cleanRequest($v);
-		}
-		else
-			$clean_data = trim(strip_tags($data));
-		return $clean_data;
-	}
-
 	private function CreateAccount()
 	{
-		if ($this->method !== 'POST')
+		if ($this->Method !== 'POST')
 			return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE
-                , "Expected POST request type, received " . $this->method . '.');
+                , "Expected POST request type, received " . $this->Method . '.');
 
 		if (!isset($_POST['username'])
 			|| !isset($_POST['password'])
@@ -107,11 +59,11 @@ abstract class API
 		if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))
 			return ResponseFactory::GenerateError(Response::E_INVALIDEMAIL, "Invalid email address provided.");
 
-		$found = $this->instance->SelectRows("users", array("username" => $_POST['username']));
+		$found = $this->Database->SelectRows("users", array("username" => $_POST['username']));
 
 		if (mysql_num_rows($found) == 0)
 		{
-			$result = $this->instance->InsertRows("users", array
+			$result = $this->Database->InsertRows("users", array
 				(
 					"username" => $_POST['username'],
 					"password" => $_POST['password'],
@@ -132,12 +84,12 @@ abstract class API
      * Performs the requested callback only if the user is authenticated
      * (token is valid).
      */
-    protected function IsLoggedIn($callback)
+    private function isLoggedIn($callback)
     {
         if (!isset($_GET['token']))
             return ResponseFactory::GenerateError(Response::E_NOCREDENTIALS, "No token issued.");
 
-        $found = $this->instance->SelectRows("users_loggedin", array
+        $found = $this->Database->SelectRows("users_loggedin", array
         (
             "token" => $_GET['token']
         ));
@@ -155,7 +107,7 @@ abstract class API
 
     private function getLoggedInUsers($username)
     {
-        return $this->instance->SelectRows("users_loggedin", array
+        return $this->Database->SelectRows("users_loggedin", array
         (
             "username" => $username
         ));
@@ -163,8 +115,8 @@ abstract class API
 
 	private function Login()
 	{
-		if ($this->method !== 'GET')
-			return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, "Expected GET request type, received " . $this->method . '.');
+		if ($this->Method !== 'GET')
+			return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, "Expected GET request type, received " . $this->Method . '.');
 
 		if (!isset($_GET['username'])
 			|| !isset($_GET['password']))
@@ -172,7 +124,7 @@ abstract class API
 			return ResponseFactory::GenerateError(Response::E_NOCREDENTIALS, "Incomplete credentials given.");
 		}
 
-		$found = $this->instance->SelectRows("users", array
+		$found = $this->Database->SelectRows("users", array
 		(
 			"username" => $_GET['username'],
 			"password" => $_GET['password']
@@ -188,14 +140,14 @@ abstract class API
         if ($rowCount != 0 && (time() - $arr['tokenissued']) > 86400)
         {
             //Expire token after 24 hours
-            $this->instance->DeleteRows("users_loggedin", array( "token" => $arr['token']));
+            $this->Database->DeleteRows("users_loggedin", array( "token" => $arr['token']));
             $rowCount = 0;
         }
 
 		if ($rowCount == 0)
 		{
 			$tok = RNG::FixedString(32, RNG::ALPHANUMERICAL);
-			$this->instance->InsertRows("users_loggedin", array
+			$this->Database->InsertRows("users_loggedin", array
 			(
 				"username" 	=> $_GET['username'],
 				"token" 	=> $tok,
@@ -210,20 +162,20 @@ abstract class API
 
 	private function Logout()
 	{
-		if ($this->method !== 'POST')
-			return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, "Expected POST request type, received " . $this->method . '.');
+		if ($this->Method !== 'POST')
+			return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, "Expected POST request type, received " . $this->Method . '.');
 
 		if (!isset($_POST['token']))
 			return ResponseFactory::GenerateError(Response::E_INVALIDTOKEN, "No token provided.");
 
-		$found = $this->instance->SelectRows("users_loggedin", array
+		$found = $this->Database->SelectRows("users_loggedin", array
 		(
 			'token' => $_POST['token']
 		));
 
 		if (mysql_num_rows($found) != 0)
 		{
-			$this->instance->DeleteRows("users_loggedin", array
+			$this->Database->DeleteRows("users_loggedin", array
 			(
 				'token' => $_POST['token']
 			));
