@@ -83,13 +83,12 @@ abstract class API
 	public function ProcessRequest()
 	{		
 		if ((int)method_exists($this, $this->endpt) > 0)
-			return $this->sendResponse($this->{$this->endpt}($this->args));
+			return $this->sendResponse($this->IsLoggedIn($this->{$this->endpt}));
 		return $this->sendResponse("Endpoint does not exist: $this->endpt", 404);
 	}
 
 	private function cleanRequest($data)
 	{
-
 		$clean_data = Array();
 		if (is_array($data))
 		{
@@ -178,6 +177,31 @@ abstract class API
 		else
 			return $this->generateError(APIErrors::E_USEREXISTS, "User already exists.");
 	}
+
+    /*
+     * Performs the requested callback only if the user is authenticated
+     * (token is valid).
+     */
+    protected function IsLoggedIn($callback)
+    {
+        if (!isset($_GET['tok']))
+            return $this->generateError(APIErrors::E_NOCREDENTIALS, "No token issued.");
+
+        $found = $this->instance->SelectRows("users_loggedin", array
+        (
+            "token" => $_GET['tok']
+        ));
+
+        $arr = mysql_fetch_array($found);
+        $rowCount = mysql_num_rows($found);
+        if (mysql_num_rows($found) == 0
+            || ($rowCount != 0 && (time() - $arr['tokenissued'] > 86400)))
+        {
+            return $this->generateError(APIErrors::E_INVALIDTOKEN, "Token is invalid or expired.");
+        }
+
+        $callback();
+    }
 
 	private function Login()
 	{
