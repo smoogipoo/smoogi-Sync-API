@@ -3,6 +3,14 @@
 abstract class Schema
 {
     public $DB_PREFIX;
+    protected $DB_NAME;
+
+    public function __construct($dbname, $dbprefix)
+    {
+        $this->DB_NAME = $dbname;
+        $this->DB_PREFIX = $dbprefix;
+    }
+
 
     public function CreateSchema($database) { }
 

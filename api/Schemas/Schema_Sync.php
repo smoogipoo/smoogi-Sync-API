@@ -3,8 +3,10 @@ require 'Schema_Base.php';
 
 class SyncSchema extends Schema
 {
-    public $DB_NAME = 'sync';
-    public $DB_PREFIX = 'sync_';
+    public function __construct()
+    {
+        parent::__construct('sync', 'sync_');
+    }
 
     private $usersTable = array
     (
@@ -30,7 +32,7 @@ class SyncSchema extends Schema
 
     public function CreateSchema($database)
     {
-        mysql_query('CREATE DATABASE IF NOT EXISTS $this->DB_NAME;', $database);
+        mysql_query("CREATE DATABASE IF NOT EXISTS $this->DB_NAME;", $database);
         mysql_select_db($this->DB_NAME);
 
         //Create the users tables
