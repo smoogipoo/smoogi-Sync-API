@@ -9,7 +9,7 @@ class ResponseFactory
         return json_encode($response);
     }
 
-    public function RequestStatus($code)
+    public static function RequestStatus($code)
     {
         $status = array
         (
@@ -40,7 +40,7 @@ class ResponseFactory
             "Response"	    => $response,
         );
         if (!empty($data))
-            array_push($ret, array( "Data" => $data ));
+            $ret['Data'] = $data;
         return $ret;
     }
 }

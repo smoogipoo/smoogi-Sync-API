@@ -64,7 +64,14 @@ abstract class API
 	public function ProcessRequest()
 	{		
 		if ((int)method_exists($this, $this->endpt) > 0)
-			return ResponseFactory::SendResponse($this->IsLoggedIn($this->{$this->endpt}));
+        {
+            if ($this->endpt == 'CreateAccount'
+                || $this->endpt == 'Login' || $this->endpt == 'Logout')
+            {
+                return ResponseFactory::SendResponse($this->{$this->endpt}());
+            }
+			return ResponseFactory::SendResponse($this->IsLoggedIn($this->endpt));
+        }
 		return ResponseFactory::SendResponse("Endpoint does not exist: $this->endpt", 404);
 	}
 
@@ -114,7 +121,8 @@ abstract class API
 			if (!$result)
 				return ResponseFactory::GenerateError(Response::E_NORETURN, "Unable to create account.");
 			
-			return ResponseFactory::GenerateResponse(Response::R_USERACCOUNTCREATED, $_POST['username']);
+			return ResponseFactory::GenerateResponse(1, Response::R_USERACCOUNTCREATED
+                                                     , array ( "username" => $_POST['username']));
 		}
 		else
 			return ResponseFactory::GenerateError(Response::E_USEREXISTS, "User already exists.");
@@ -126,12 +134,12 @@ abstract class API
      */
     protected function IsLoggedIn($callback)
     {
-        if (!isset($_GET['tok']))
+        if (!isset($_GET['token']))
             return ResponseFactory::GenerateError(Response::E_NOCREDENTIALS, "No token issued.");
 
         $found = $this->instance->SelectRows("users_loggedin", array
         (
-            "token" => $_GET['tok']
+            "token" => $_GET['token']
         ));
 
         $arr = mysql_fetch_array($found);
@@ -139,10 +147,18 @@ abstract class API
         if (mysql_num_rows($found) == 0
             || ($rowCount != 0 && (time() - $arr['tokenissued'] > 86400)))
         {
-            return ResponseFactory::GenerateError(Response::E_INVALIDTOKEN, "Token is invalid or expired.");
+            return ResponseFactory::GenerateError(Response::E_NOTLOGGEDIN, "Not logged in.");
         }
 
-        return $callback();
+        return call_user_func(array (get_called_class(), $callback ));
+    }
+
+    private function getLoggedInUsers($username)
+    {
+        return $this->instance->SelectRows("users_loggedin", array
+        (
+            "username" => $username
+        ));
     }
 
 	private function Login()
@@ -165,10 +181,7 @@ abstract class API
 		if (mysql_num_rows($found) == 0)
 			return ResponseFactory::GenerateError(Response::E_INVALIDCRETENDTIALS, "Wrong username/password.");
 
-		$currentExisting = $this->instance->SelectRows("users_loggedin", array
-		(
-			"username" => $_GET['username']
-		));
+        $currentExisting = $this->getLoggedInUsers($_GET['username']);
 
         $arr = mysql_fetch_array($currentExisting);
         $rowCount = mysql_num_rows($currentExisting);
@@ -176,6 +189,7 @@ abstract class API
         {
             //Expire token after 24 hours
             $this->instance->DeleteRows("users_loggedin", array( "token" => $arr['token']));
+            $rowCount = 0;
         }
 
 		if ($rowCount == 0)
@@ -188,8 +202,10 @@ abstract class API
                 "tokenissued" => time()
 			));
 		}
-        return ResponseFactory::GenerateResponse(1, Response::R_TOKENCALLBACK
-            , mysql_fetch_array($this->instance->SelectRows("users_loggedin", array ( "username" => $_GET['username'])))['token']);
+
+        $currentExisting = $this->getLoggedInUsers($_GET['username']);
+        $arr = mysql_fetch_array($currentExisting);
+        return ResponseFactory::GenerateResponse(1, Response::R_TOKENCALLBACK, array ( 'token' => $arr['token']));
 	}
 
 	private function Logout()

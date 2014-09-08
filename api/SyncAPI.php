@@ -11,6 +11,11 @@ class SyncAPI extends API
 		$this->connection = $instance->Connection;
 		parent::__construct($request, $instance);
 	}
+
+    public static function Test()
+    {
+        return ResponseFactory::GenerateError(Response::E_NORETURN, "WE DID IT REDDIT");
+    }
 }
 
 if (!array_key_exists('HTTP_ORIGIN', $_SERVER))
