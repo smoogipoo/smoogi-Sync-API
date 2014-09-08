@@ -1,9 +1,6 @@
 <?php
-
 require 'APIModel.php';
-require 'Helpers/MysqlHelper.php';
 require 'Schemas/Schema_Sync.php';
-require 'Helpers/ResponseFactory.php';
 require 'Helpers/RNG.php';
 
 class SyncAPI extends API

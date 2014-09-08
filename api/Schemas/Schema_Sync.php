@@ -1,5 +1,4 @@
 <?php
-
 require 'Schema_Base.php';
 
 class SyncSchema implements Schema

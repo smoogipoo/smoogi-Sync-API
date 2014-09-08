@@ -1,6 +1,5 @@
 <?php
-
-require_once 'MysqlConfig.php';
+require 'MysqlConfig.php';
 
 class MYSQLInstance
 {

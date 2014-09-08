@@ -1,5 +1,4 @@
 <?php
-
 require 'Response.php';
 
 class ResponseFactory

@@ -10,6 +10,7 @@ class Response
     const E_USEREXISTS			= 4;
     const E_INVALIDEMAIL		= 5;
     const E_EMPTYCREDENTIALS	= 6;
+    const E_NOTLOGGEDIN         = 7;
     //System errors
     const E_INVALIDREQUESTTYPE	= -2;
     const E_NORETURN			= -1;
