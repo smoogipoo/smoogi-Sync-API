@@ -9,7 +9,7 @@ class MYSQLInstance
     public function __construct(Schema $schema)
     {
         if (gettype($schema) != 'object')
-            throw new Exception("Invalid schema object.");
+            throw new Exception('Invalid schema object.');
 
         $this->schema = $schema;
 
@@ -22,7 +22,7 @@ class MYSQLInstance
     private function ensureConnected()
     {
         if (!$this->Connection)
-            throw new Exception("Database is not connected.");
+            throw new Exception('Database is not connected.');
     }
 
     public function InsertRows($table, array $contents)
@@ -42,7 +42,7 @@ class MYSQLInstance
             $values .= "'" . $this->escapeString($v) . "'";
         }
 
-        $sql = sprintf("INSERT INTO %s%s (%s) VALUES (%s);"
+        $sql = sprintf('INSERT INTO %s%s (%s) VALUES (%s);'
             , $this->schema->DB_PREFIX
             , $this->escapeString($table)
             , $columns
@@ -60,11 +60,11 @@ class MYSQLInstance
         foreach ($search as $k => $v)
         {
             if ($multiSearchString !== '')
-                $multiSearchString .= " AND ";
-            $multiSearchString .= $this->escapeString($k) . "=" . "'" . $this->escapeString($v) . "'";
+                $multiSearchString .= ' AND ';
+            $multiSearchString .= $this->escapeString($k) . '=' . "'" . $this->escapeString($v) . "'";
         }
 
-        $sql = sprintf("SELECT * FROM %s%s WHERE %s;"
+        $sql = sprintf('SELECT * FROM %s%s WHERE %s;'
             , $this->schema->DB_PREFIX
             , $this->escapeString($table)
             , $multiSearchString);
@@ -81,15 +81,15 @@ class MYSQLInstance
         foreach ($search as $k => $v)
         {
             if ($multiSearchString !== '')
-                $multiSearchString .= " AND ";
-            $multiSearchString .= $this->escapeString($k) . "=" . "'" . $this->escapeString($v) . "'";
+                $multiSearchString .= ' AND ';
+            $multiSearchString .= $this->escapeString($k) . '=' . "'" . $this->escapeString($v) . "'";
         }
 
-        $sql = sprintf("SELECT * FROM %s%s WHERE %s LIMIT %s;"
+        $sql = sprintf('SELECT * FROM %s%s WHERE %s LIMIT %s;'
             , $this->schema->DB_PREFIX
             , $this->escapeString($table)
             , $multiSearchString
-            , $start . ($count === 0 ? "" : ",$count"));
+            , $start . ($count === 0 ? '' : ",$count"));
 
         return mysql_query($sql, $this->Connection);
     }
@@ -103,11 +103,11 @@ class MYSQLInstance
         foreach ($search as $k => $v)
         {
             if ($multiSearchString !== '')
-                $multiSearchString .= " AND ";
-            $multiSearchString .= $this->escapeString($k) . "=" . "'" . $this->escapeString($v) . "'";
+                $multiSearchString .= ' AND ';
+            $multiSearchString .= $this->escapeString($k) . '=' . "'" . $this->escapeString($v) . "'";
         }
 
-        $sql = sprintf("DELETE FROM %s%s WHERE %s;"
+        $sql = sprintf('DELETE FROM %s%s WHERE %s;'
             , $this->schema->DB_PREFIX
             , $this->escapeString($table)
             , $multiSearchString);
@@ -117,7 +117,7 @@ class MYSQLInstance
 
     public function TableExists($table)
     {
-        $sql = sprintf("SHOW TABLES LIKE %s%s;"
+        $sql = sprintf('SHOW TABLES LIKE %s%s;'
             , $this->schema->DB_PREFIX
             , $this->escapeString($table));
 

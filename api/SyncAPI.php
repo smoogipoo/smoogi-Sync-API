@@ -14,7 +14,7 @@ class SyncAPI extends API
 
     public static function Test(API $instance)
     {
-        return ResponseFactory::GenerateError(Response::E_NORETURN, "WE DID IT REDDIT");
+        return ResponseFactory::GenerateError(Response::E_NORETURN, 'WE DID IT REDDIT');
     }
 }
 
@@ -40,7 +40,7 @@ try
 }
 catch (Exception $e)
 {
-    echo json_encode(array('error' => $e->getMessage()));
+    echo json_encode(array( 'error' => $e->getMessage() ));
 }
 
 ?>

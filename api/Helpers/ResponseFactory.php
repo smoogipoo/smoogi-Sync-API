@@ -5,7 +5,7 @@ class ResponseFactory
 {
     public static function SendResponse($response, $status = 200)
     {
-        header("HTTP/1.1 $status " . ResponseFactory::RequestStatus($status));
+        header('HTTP/1.1 $status ' . ResponseFactory::RequestStatus($status));
         return json_encode($response);
     }
 
@@ -23,9 +23,9 @@ class ResponseFactory
             : $status[500];
     }
 
-    public static function GenerateError($error, $description = "")
+    public static function GenerateError($error, $description = '')
     {
-        if ($description != "")
+        if ($description != '')
             return ResponseFactory::GenerateResponse(0, $error, $description);
         else
             return ResponseFactory::GenerateResponse(0, $error);
@@ -36,8 +36,8 @@ class ResponseFactory
         $okstatus = $ok == 1 ? true : false;
         $ret = array
         (
-            "OK"            => $okstatus,
-            "Response"	    => $response,
+            'OK'            => $okstatus,
+            'Response'	    => $response,
         );
         if (!empty($data))
             $ret['Data'] = $data;
