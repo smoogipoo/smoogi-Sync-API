@@ -102,7 +102,7 @@ abstract class API
             return ResponseFactory::GenerateError(Response::E_NOTLOGGEDIN, "Not logged in.");
         }
 
-        return call_user_func(array (get_called_class(), $callback ));
+        return call_user_func(array (get_called_class(), $callback ), $this);
     }
 
     private function getLoggedInUsers($username)

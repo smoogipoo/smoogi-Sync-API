@@ -12,7 +12,7 @@ class SyncAPI extends API
 		parent::__construct($request, $instance);
 	}
 
-    public static function Test()
+    public static function Test(API $instance)
     {
         return ResponseFactory::GenerateError(Response::E_NORETURN, "WE DID IT REDDIT");
     }
