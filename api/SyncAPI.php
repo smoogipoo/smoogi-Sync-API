@@ -5,12 +5,12 @@ require 'Helpers/RNG.php';
 
 class SyncAPI extends API
 {
-	public function __construct($request)
-	{
-		$instance = new MYSQLInstance(new SyncSchema());
-		$this->connection = $instance->Connection;
-		parent::__construct($request, $instance);
-	}
+    public function __construct($request)
+    {
+        $instance = new MYSQLInstance(new SyncSchema());
+        $this->connection = $instance->Connection;
+        parent::__construct($request, $instance);
+    }
 
     public static function Test(API $instance)
     {
@@ -19,28 +19,28 @@ class SyncAPI extends API
 }
 
 if (!array_key_exists('HTTP_ORIGIN', $_SERVER))
-	$_SERVER['HTTP_ORIGIN'] = $_SERVER['SERVER_NAME'];
+    $_SERVER['HTTP_ORIGIN'] = $_SERVER['SERVER_NAME'];
 
 try
 {
-	$API = null;
+    $API = null;
 
-	if (!isset($_REQUEST['service']))
-		return;
+    if (!isset($_REQUEST['service']))
+        return;
 
-	switch (strtolower($_REQUEST['service']))
-	{
-		case "sync":
-			$API = new SyncAPI($_REQUEST['req']);
-			break;
-	}
+    switch (strtolower($_REQUEST['service']))
+    {
+        case "sync":
+            $API = new SyncAPI($_REQUEST['req']);
+            break;
+    }
 
-	if ($API != null)
-		echo $API->ProcessRequest();
+    if ($API != null)
+        echo $API->ProcessRequest();
 }
 catch (Exception $e)
 {
-	echo json_encode(array('error' => $e->getMessage()));
+    echo json_encode(array('error' => $e->getMessage()));
 }
 
 ?>

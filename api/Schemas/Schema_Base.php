@@ -2,7 +2,7 @@
 
 interface Schema
 {
-	public function CreateSchema($database);
+    public function CreateSchema($database);
 }
 
 ?>
