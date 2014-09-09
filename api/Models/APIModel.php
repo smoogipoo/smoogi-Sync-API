@@ -190,7 +190,7 @@ abstract class API
             return ResponseFactory::GenerateResponse(1, Response::R_LOGOUTSUCCESS);
         }
         else
-            return ResponseFactory::GenerateError(Response::E_INVALIDTOKEN, $_GET['token']);
+            return ResponseFactory::GenerateError(Response::E_INVALIDTOKEN, 'User is not logged in.');
     }
 }
 
