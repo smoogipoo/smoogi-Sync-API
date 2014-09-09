@@ -29,21 +29,6 @@ abstract class Schema
 
         return $tableQuery;
     }
-
-    /*
-     * Generate a MYSQL query to add a foreign key to $table.
-     * $keyReference must be passed as TName(TKey)
-     */
-    protected function generateCreateForeignKeyQuery($table, $keyName, $keyReference)
-    {
-        $tableQuery = "IF NOT EXISTS (SELECT NULL FROM information_schema.TABLE_CONSTRAINTS WHERE " .
-            "CONSTRAINT_SCHEMA = DATABASE() AND " .
-            "CONSTRAINT_NAME   = $keyName AND " .
-            "CONSTRAINT_TYPE   = 'FOREIGN KEY') THEN " .
-            "ALTER TABLE $this->DB_PREFIX" . "$table ADD CONSTRAINT $keyName FOREIGN KEY ($keyName) REFERENCES $keyReference;";
-
-        return $tableQuery;
-    }
 }
 
 ?>

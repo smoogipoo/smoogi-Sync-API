@@ -50,7 +50,8 @@ class QewbeSchema extends Schema
 
         //Create the FileList table
         mysql_query($this->generateCreateTableQuery('FileList', $this->fileListTable), $database);
-        mysql_query($this->generateCreateForeignKeyQuery('FileList', 'user_id', '`Users`(`id`)'), $database);
+        $fkey = "ALTER TABLE `qewbe_filelist` ADD CONSTRAINT `user_id` FOREIGN KEY (`id`) REFERENCES `qewbe_users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;";
+        mysql_query($fkey, $database);
     }
 }
 
