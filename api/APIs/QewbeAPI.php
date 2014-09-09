@@ -10,6 +10,13 @@ class QewbeAPI extends API
         parent::__construct($request, $instance);
     }
 
+    private static function getUserFromToken(API $instance, $token)
+    {
+        //Find the user ID
+        $loggedInUser = mysql_fetch_array($instance->Database->SelectRows('users_loggedin', array( 'token' => $token )));
+        return mysql_fetch_array($instance->Database->SelectRows('users', array( 'username' => $loggedInUser['username'] )));
+    }
+
     public static function UploadFile(API $instance)
     {
         if ($_FILES['file']['error'] > 0)
@@ -24,10 +31,9 @@ class QewbeAPI extends API
         $current++;
         //Update the filename in the DB ASAP
         $instance->Database->UpdateRows('qewbe', array( 'nextfile' => $current ));
-        //Find the user ID
-        $loggedInUser = mysql_fetch_array($instance->Database->SelectRows('users_loggedin', array( 'token' => $_POST['token'] )));
-        $user = mysql_fetch_array($instance->Database->SelectRows('users', array( 'username' => $loggedInUser['username'] )));
-        //Add file for user ID
+
+        //Add file for the user
+        $user = QewbeAPI::getUserFromToken($instance, $_POST['token']);
         $instance->Database->InsertRows('filelist', array
         (
             'filename' => $current . '.' . $fext,
@@ -36,6 +42,13 @@ class QewbeAPI extends API
             'hash' => $fhash
         ));
         return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, array( 'file' => $current));
+    }
+
+    public static function GetFiles(API $instance)
+    {
+        $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
+        $files = mysql_fetch_array($instance->Database->SelectRows('filelist', array( 'user_id' => $user['id'] )));
+        return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, array( 'files' => $files ));
     }
 }
 ?>
