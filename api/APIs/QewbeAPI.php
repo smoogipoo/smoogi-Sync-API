@@ -68,6 +68,7 @@ class QewbeAPI extends API
         $instance->Database->InsertRows('filelist', array
         (
             'filename' => $current . '.' . $fext,
+            'type' => $_FILES['file']['type'],
             'user_id' => $user['id'],
             'lastmodified' => $ftime,
             'hash' => $fhash
@@ -89,6 +90,7 @@ class QewbeAPI extends API
             $file = array
             (
                 'Name' => $row['filename'],
+                'Type' => $row['type'],
                 'Hash' => $row['hash'],
                 'Uploaded' => $row['lastmodified']
             );

@@ -32,6 +32,7 @@ class QewbeSchema extends Schema
     private $fileListTable = array
     (
         'filename' => 'VARCHAR(255)',
+        'type' => 'VARCHAR(50)',
         'lastmodified' => 'DATE',
         'hash' => 'VARCHAR(256)',
     );
