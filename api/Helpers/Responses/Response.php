@@ -5,7 +5,7 @@ class Response
     //Generic information errors
     const E_NOSERVICE 			= 0;
     const E_NOCREDENTIALS 		= 1;
-    const E_INVALIDCRETENDTIALS = 2;
+    const E_INVALIDCREDENTIALS = 2;
     const E_INVALIDTOKEN		= 3;
     const E_USEREXISTS			= 4;
     const E_INVALIDEMAIL		= 5;

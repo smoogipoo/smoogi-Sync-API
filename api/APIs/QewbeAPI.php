@@ -46,7 +46,7 @@ class QewbeAPI extends API
         //Upload the file to S3
         $aws = \Aws\Common\Aws::factory('AWSConfig.php');
         $s3Client = $aws->get('s3');
-        $result = $s3Client->putObject(array
+        $s3Client->putObject(array
         (
             'Bucket' => 'u.qew.be',
             'Key' => $current . '.' . $fext,
@@ -73,7 +73,7 @@ class QewbeAPI extends API
             'lastmodified' => $ftime,
             'hash' => $fhash
         ));
-        return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, array( 'file' => $current));
+        return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, array( 'File' => $current));
     }
 
     /*
@@ -94,9 +94,9 @@ class QewbeAPI extends API
                 'Hash' => $row['hash'],
                 'Uploaded' => $row['lastmodified']
             );
-            array_push($ret, array( 'file' => $file ));
+            array_push($ret, array( 'File' => $file ));
         }
-        return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, array( 'files' => $ret ));
+        return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, array( 'Files' => $ret ));
     }
 }
 ?>

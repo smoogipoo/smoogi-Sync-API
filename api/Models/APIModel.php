@@ -80,7 +80,7 @@ abstract class API
                 return ResponseFactory::GenerateError(Response::E_NORETURN, 'Unable to create account.');
 
             return ResponseFactory::GenerateResponse(1, Response::R_USERACCOUNTCREATED
-                , array( 'username' => $_GET['username'] ));
+                , array( 'Username' => $_GET['username'] ));
         }
         else
             return ResponseFactory::GenerateError(Response::E_USEREXISTS, 'User already exists.');
@@ -138,7 +138,7 @@ abstract class API
         ));
 
         if (mysql_num_rows($found) == 0)
-            return ResponseFactory::GenerateError(Response::E_INVALIDCRETENDTIALS, 'Wrong username/password.');
+            return ResponseFactory::GenerateError(Response::E_INVALIDCREDENTIALS, 'Wrong username/password.');
 
         $currentExisting = $this->getLoggedInUsers($_GET['username']);
 
@@ -164,7 +164,7 @@ abstract class API
 
         $currentExisting = $this->getLoggedInUsers($_GET['username']);
         $arr = mysql_fetch_array($currentExisting);
-        return ResponseFactory::GenerateResponse(1, Response::R_TOKENCALLBACK, array( 'token' => $arr['token'] ));
+        return ResponseFactory::GenerateResponse(1, Response::R_TOKENCALLBACK, array( 'Token' => $arr['token'] ));
     }
 
     private function Logout()
