@@ -76,7 +76,7 @@ class MYSQLInstance
         if ($search != null)
             $sqlString .= ' WHERE %s';
         $sql = sprintf($sqlString, $table, $multiContentsString, $multiSearchString);
-        
+
         return mysql_query($sql, $this->Connection);
     }
 

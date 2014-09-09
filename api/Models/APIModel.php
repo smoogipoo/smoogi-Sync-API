@@ -49,39 +49,38 @@ abstract class API
 
     private function CreateAccount()
     {
-        if ($this->Method !== 'POST')
-            return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE
-                , 'Expected POST request type, received ' . $this->Method . '.');
+        if ($this->Method !== 'GET')
+            return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, 'Expected GET request type, received ' . $this->Method . '.');
 
-        if (!isset($_POST['username'])
-            || !isset($_POST['password'])
-            || !isset($_POST['email']))
+        if (!isset($_GET['username'])
+            || !isset($_GET['password'])
+            || !isset($_GET['email']))
         {
             return ResponseFactory::GenerateError(Response::E_NOCREDENTIALS, 'Incomplete credentials given.');
         }
 
-        if ($_POST['username'] === '' || $_POST['password'] === '')
+        if ($_GET['username'] === '' || $_GET['password'] === '')
             return ResponseFactory::GenerateError(Response::E_EMPTYCREDENTIALS, 'Empty credentials entered.');
 
-        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))
+        if (!filter_var($_GET['email'], FILTER_VALIDATE_EMAIL))
             return ResponseFactory::GenerateError(Response::E_INVALIDEMAIL, 'Invalid email address provided.');
 
-        $found = $this->Database->SelectRows('users', array( 'username' => $_POST['username'] ));
+        $found = $this->Database->SelectRows('users', array( 'username' => $_GET['username'] ));
 
         if (mysql_num_rows($found) == 0)
         {
             $result = $this->Database->InsertRows('users', array
             (
-                'username' => $_POST['username'],
-                'password' => $_POST['password'],
-                'email' => $_POST['email']
+                'username' => $_GET['username'],
+                'password' => $_GET['password'],
+                'email' => $_GET['email']
             ));
 
             if (!$result)
                 return ResponseFactory::GenerateError(Response::E_NORETURN, 'Unable to create account.');
 
             return ResponseFactory::GenerateResponse(1, Response::R_USERACCOUNTCREATED
-                , array( 'username' => $_POST['username'] ));
+                , array( 'username' => $_GET['username'] ));
         }
         else
             return ResponseFactory::GenerateError(Response::E_USEREXISTS, 'User already exists.');
@@ -170,28 +169,28 @@ abstract class API
 
     private function Logout()
     {
-        if ($this->Method !== 'POST')
-            return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, 'Expected POST request type, received ' . $this->Method . '.');
+        if ($this->Method !== 'GET')
+            return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, 'Expected GET request type, received ' . $this->Method . '.');
 
-        if (!isset($_POST['token']))
+        if (!isset($_GET['token']))
             return ResponseFactory::GenerateError(Response::E_INVALIDTOKEN, 'No token provided.');
 
         $found = $this->Database->SelectRows('users_loggedin', array
         (
-            'token' => $_POST['token']
+            'token' => $_GET['token']
         ));
 
         if (mysql_num_rows($found) != 0)
         {
             $this->Database->DeleteRows('users_loggedin', array
             (
-                'token' => $_POST['token']
+                'token' => $_GET['token']
             ));
 
             return ResponseFactory::GenerateResponse(1, Response::R_LOGOUTSUCCESS);
         }
         else
-            return ResponseFactory::GenerateError(Response::E_INVALIDTOKEN, $_POST['token']);
+            return ResponseFactory::GenerateError(Response::E_INVALIDTOKEN, $_GET['token']);
     }
 }
 
