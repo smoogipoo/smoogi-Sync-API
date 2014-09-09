@@ -1,6 +1,6 @@
 <?php
-require 'Helpers/Responses/ResponseFactory.php';
-require 'Helpers/MYSQL/MysqlHelper.php';
+require_once $BasePath . '/Helpers/Responses/ResponseFactory.php';
+require_once $BasePath . '/Helpers/MYSQL/MysqlHelper.php';
 
 abstract class API
 {
@@ -43,6 +43,7 @@ abstract class API
                 return ResponseFactory::SendResponse($resp);
             }
         }
+        return null;
     }
 
     private function CreateAccount()

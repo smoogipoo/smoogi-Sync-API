@@ -2,5 +2,5 @@
 RewriteEngine On
 RewriteCond %(REQUEST_FILENAME) !=f
 RewriteCond %(REQUEST_FILENAME) !=d
-RewriteRule api/(.*)$ api/SyncAPI.php?req=$1 [QSA,NC,L]
+RewriteRule api/(.*)$ api/API.php?req=$1 [QSA,NC,L]
 </IfModule>

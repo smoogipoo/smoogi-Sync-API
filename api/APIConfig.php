@@ -1,0 +1,2 @@
+<?php
+$BasePath = getcwd();

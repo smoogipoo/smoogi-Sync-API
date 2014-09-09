@@ -1,22 +1,7 @@
 <?php
-require 'APIModel.php';
-require 'Schemas/Schema_Sync.php';
-require 'Helpers/RNG.php';
-
-class SyncAPI extends API
-{
-    public function __construct($request)
-    {
-        $instance = new MYSQLInstance(new SyncSchema());
-        $this->connection = $instance->Connection;
-        parent::__construct($request, $instance);
-    }
-
-    public static function Test(API $instance)
-    {
-        return ResponseFactory::GenerateError(Response::E_NORETURN, 'WE DID IT REDDIT');
-    }
-}
+require 'APIConfig.php';
+require 'APIs/SyncAPI.php';
+require 'APIs/QewbeAPI.php';
 
 if (!array_key_exists('HTTP_ORIGIN', $_SERVER))
     $_SERVER['HTTP_ORIGIN'] = $_SERVER['SERVER_NAME'];
@@ -32,6 +17,9 @@ try
     {
         case "sync":
             $API = new SyncAPI($_REQUEST['req']);
+            break;
+        case "qewbe":
+            $API = new QewbeAPI($_REQUEST['req']);
             break;
     }
 

@@ -1,12 +1,18 @@
 <?php
-require_once $BasePath .  '/Schemas/Schema_Base.php';
+require_once $BasePath . '/Schemas/Schema_Base.php';
 
-class SyncSchema extends Schema
+class QewbeSchema extends Schema
 {
     public function __construct()
     {
-        parent::__construct('sync', 'sync_');
+        parent::__construct('qewbe', 'qewbe_');
     }
+
+    private $qewbeTable = array
+    (
+        'filecount' => 'INT UNSIGNED',
+        'nextfile' => 'VARCHAR(10)'
+    );
 
     private $usersTable = array
     (
@@ -34,6 +40,9 @@ class SyncSchema extends Schema
     {
         mysql_query("CREATE DATABASE IF NOT EXISTS $this->DB_NAME;", $database);
         mysql_select_db($this->DB_NAME);
+
+        //Create the main table
+        mysql_query($this->generateCreateTableQuery('Qewbe', $this->qewbeTable), $database);
 
         //Create the users tables
         mysql_query($this->generateCreateTableQuery('Users', $this->usersTable), $database);
