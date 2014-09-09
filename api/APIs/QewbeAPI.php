@@ -19,6 +19,11 @@ class QewbeAPI extends API
         return mysql_fetch_array($instance->Database->SelectRows('users', array( 'username' => $loggedInUser['username'] )));
     }
 
+    /*
+     * Uploads a file to S3 and returns the filename.
+     * Adds the filename to the database and increment
+     * the in-database tracking variables.
+     */
     public static function UploadFile(API $instance)
     {
 
@@ -31,9 +36,12 @@ class QewbeAPI extends API
 
         //Increment the file
         $current = $instance->Database->SelectRows('qewbe', 'nextfile');
-        $current++;
-        //Update the filename in the DB ASAP
-        $instance->Database->UpdateRows('qewbe', array( 'nextfile' => $current ));
+        //Update the filename in the DB
+        //This must be done ASAP to prevent conflicts
+        $instance->Database->UpdateRows('qewbe', array( 'nextfile' => ++$current ));
+        //Update the file counts in the DB
+        $currentFileCount = $instance->Database->SelectRows('qewbe', 'filecount');
+        $instance->Database->UpdateRows('qewbe', array( 'filecount' => ++$currentFileCount ));
 
         //Upload the file to S3
         $aws = \Aws\Common\Aws::factory('AWSConfig.php');
@@ -67,6 +75,9 @@ class QewbeAPI extends API
         return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, array( 'file' => $current));
     }
 
+    /*
+     * Returns all the files for the user that exist in AWS.
+     */
     public static function GetFiles(API $instance)
     {
         $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
