@@ -76,7 +76,8 @@ class MYSQLInstance
         if ($search != null)
             $sqlString .= ' WHERE %s';
         $sql = sprintf($sqlString, $table, $multiContentsString, $multiSearchString);
-
+        
+        return mysql_query($sql, $this->Connection);
     }
 
     public function SelectRowsLimit($table, array $search, $start, $count = 0)
