@@ -83,23 +83,14 @@ class QewbeAPI extends API
         $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
         $files = mysql_fetch_array($instance->Database->SelectRows('filelist', array( 'user_id' => $user['id'] )));
 
-        $aws = \Aws\Common\Aws::factory('AWSConfig.php');
-        $s3Client = $aws->get('s3');
-        $iterator = $s3Client->getIterator('ListObjects', array( 'Bucket' => 'u.qew.be' ));
         $ret = array();
-        foreach ($iterator as $object)
+        foreach ($files as $row)
         {
-            //Don't add files which the user doesn't own
-            foreach ($files as $k => $v)
-            {
-                if ($k == 'filename' && $v != $object['Key'])
-                    continue;
-            }
             $file = array
             (
-                'Name' => $object['Key'],
-                'Hash' => $object['Metadata']['Hash'],
-                'Uploaded' => $object['Metadata']['Uploaded']
+                'Name' => $row['filename'],
+                'Hash' => $row['hash'],
+                'Uploaded' => $row['lastmodified']
             );
             array_push($ret, array( 'file' => $file ));
         }
