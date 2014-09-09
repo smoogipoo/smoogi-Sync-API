@@ -37,7 +37,7 @@ abstract class API
             }
             return ResponseFactory::SendResponse($this->isLoggedIn($this->endpt));
         }
-        return ResponseFactory::SendResponse('Endpoint does not exist: $this->endpt', 404);
+        return ResponseFactory::SendResponse("Endpoint does not exist: $this->endpt", 404);
     }
 
     private function CreateAccount()
