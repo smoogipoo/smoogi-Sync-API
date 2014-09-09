@@ -55,14 +55,7 @@ class MYSQLInstance
     {
         $this->ensureConnected();
 
-        $multiSearchString = '';
-
-        foreach ($search as $k => $v)
-        {
-            if ($multiSearchString !== '')
-                $multiSearchString .= ' AND ';
-            $multiSearchString .= $this->escapeString($k) . '=' . "'" . $this->escapeString($v) . "'";
-        }
+        $multiSearchString = $this->constructMultiQuery($search);
 
         $sql = sprintf('SELECT * FROM %s%s WHERE %s;'
             , $this->schema->DB_PREFIX
@@ -72,18 +65,25 @@ class MYSQLInstance
         return mysql_query($sql, $this->Connection);
     }
 
+    public function UpdateRows($table, array $contents, array $search = null)
+    {
+        $this->ensureConnected();
+
+        $multiSearchString = $this->constructMultiQuery($search);
+        $multiContentsString = $this->constructMultiQuery($contents, ',');
+
+        $sqlString = 'UPDATE %s SET %s';
+        if ($search != null)
+            $sqlString .= ' WHERE %s';
+        $sql = sprintf($sqlString, $table, $multiContentsString, $multiSearchString);
+
+    }
+
     public function SelectRowsLimit($table, array $search, $start, $count = 0)
     {
         $this->ensureConnected();
 
-        $multiSearchString = '';
-
-        foreach ($search as $k => $v)
-        {
-            if ($multiSearchString !== '')
-                $multiSearchString .= ' AND ';
-            $multiSearchString .= $this->escapeString($k) . '=' . "'" . $this->escapeString($v) . "'";
-        }
+        $multiSearchString = $this->constructMultiQuery($search);
 
         $sql = sprintf('SELECT * FROM %s%s WHERE %s LIMIT %s;'
             , $this->schema->DB_PREFIX
@@ -98,14 +98,7 @@ class MYSQLInstance
     {
         $this->ensureConnected();
 
-        $multiSearchString = '';
-
-        foreach ($search as $k => $v)
-        {
-            if ($multiSearchString !== '')
-                $multiSearchString .= ' AND ';
-            $multiSearchString .= $this->escapeString($k) . '=' . "'" . $this->escapeString($v) . "'";
-        }
+        $multiSearchString = $this->constructMultiQuery($search);
 
         $sql = sprintf('DELETE FROM %s%s WHERE %s;'
             , $this->schema->DB_PREFIX
@@ -132,6 +125,19 @@ class MYSQLInstance
     {
         return mysql_real_escape_string($data);
     }
+
+    private function constructMultiQuery(array $data, $splitter = '=')
+    {
+        $ret = '';
+        foreach ($data as $k => $v)
+        {
+            if ($ret !== '')
+                $ret .= ' AND ';
+            $ret .= $this->escapeString($k) . '=' . "'" . $this->escapeString($v) . "'";
+        }
+        return $ret;
+    }
+
 }
 
 ?>
