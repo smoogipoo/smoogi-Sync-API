@@ -4,7 +4,7 @@ require $BasePath . '/Helpers/MYSQL/MysqlConfig.php';
 class MYSQLInstance
 {
     public $Connection;
-    public $schema;
+    private $schema;
 
     public function __construct(Schema $schema)
     {

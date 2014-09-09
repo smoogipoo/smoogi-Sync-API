@@ -5,11 +5,11 @@ class ResponseFactory
 {
     public static function SendResponse($response, $status = 200)
     {
-        header("HTTP/1.1 $status " . ResponseFactory::RequestStatus($status));
+        header("HTTP/1.1 $status " . ResponseFactory::requestStatus($status));
         return json_encode($response);
     }
 
-    private static function RequestStatus($code)
+    private static function requestStatus($code)
     {
         $status = array
         (
