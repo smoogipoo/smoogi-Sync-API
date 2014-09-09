@@ -38,13 +38,13 @@ abstract class API
             }
             $resp = $this->isLoggedIn($this->endpt);
             if ($resp == null)
-                return ResponseFactory::SendResponse("Endpoint does not exist: $this->endpt", 404);
+                return ResponseFactory::SendResponse(ResponseFactory::GenerateError(Response::E_INVALIDMETHOD, "Endpoint does not exist: $this->endpt"), 404);
             else
             {
                 return ResponseFactory::SendResponse($resp);
             }
         }
-        return null;
+        return ResponseFactory::SendResponse(ResponseFactory::GenerateError(Response::E_INVALIDMETHOD, "Endpoint does not exist: $this->endpt"), 404);
     }
 
     private function CreateAccount()
