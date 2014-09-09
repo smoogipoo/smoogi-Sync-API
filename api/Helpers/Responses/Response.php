@@ -12,6 +12,7 @@ class Response
     const E_EMPTYCREDENTIALS	= 6;
     const E_NOTLOGGEDIN         = 7;
     //System errors
+    const E_INVALIDMETHOD       = -3;
     const E_INVALIDREQUESTTYPE	= -2;
     const E_NORETURN			= -1;
     //Success responses

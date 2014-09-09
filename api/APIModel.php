@@ -35,9 +35,14 @@ abstract class API
             {
                 return ResponseFactory::SendResponse($this->{$this->endpt}());
             }
-            return ResponseFactory::SendResponse($this->isLoggedIn($this->endpt));
+            $resp = $this->isLoggedIn($this->endpt);
+            if ($resp == null)
+                return ResponseFactory::SendResponse("Endpoint does not exist: $this->endpt", 404);
+            else
+            {
+                return ResponseFactory::SendResponse($resp);
+            }
         }
-        return ResponseFactory::SendResponse("Endpoint does not exist: $this->endpt", 404);
     }
 
     private function CreateAccount()
@@ -101,7 +106,8 @@ abstract class API
         {
             return ResponseFactory::GenerateError(Response::E_NOTLOGGEDIN, 'Not logged in.');
         }
-
+        if (!is_callable(array ( get_called_class(), $callback)))
+            return null;
         return call_user_func(array( get_called_class(), $callback ), $this);
     }
 
