@@ -74,7 +74,8 @@ class QewbeAPI extends API
             'Metadata' => array
             (
                 'Hash' => $fhash,
-                'Uploaded' => $ftime
+                'Uploaded' => $ftime,
+                'MimeType' => $_FILES['file']['type']
             )
         ));
 
