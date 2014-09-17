@@ -31,7 +31,8 @@ class QewbeAPI extends API
         if ($_FILES['file']['error'] > 0)
             return ResponseFactory::GenerateError(Response::R_NODATA, "No file uploaded.");
 
-        $fext = end(explode('.', $_FILES['file']['name']));
+        $tmp = explode('.', $_FILES['file']['name']);
+        $fext = end($tmp);
         $fhash = hash('sha256', $_FILES['file']['tmp_name']);
         $ftime = time();
 
