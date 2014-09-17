@@ -70,7 +70,6 @@ class QewbeAPI extends API
             'uid' => $user['id'],
             'filename' => $current . '.' . $fext,
             'type' => $_FILES['file']['type'],
-            'user_id' => $user['id'],
             'uploaded' => $ftime,
             'hash' => $fhash
         ));
@@ -94,7 +93,7 @@ class QewbeAPI extends API
             return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, 'Expected GET request type, received ' . $instance->Method . '.');
 
         $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
-        $files = mysql_fetch_array($instance->Database->SelectRows('filelist', array( 'user_id' => $user['id'] )));
+        $files = mysql_fetch_array($instance->Database->SelectRows('filelist', array( 'uid' => $user['id'] )));
 
         $ret = array();
         foreach ($files as $row)
