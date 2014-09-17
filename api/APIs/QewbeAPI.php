@@ -28,6 +28,9 @@ class QewbeAPI extends API
      */
     public static function UploadFile(API $instance)
     {
+        if ($instance->Method != 'POST')
+            return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, 'Expected POST request type, received ' . $instance->Method . '.');
+
         if ($_FILES['file']['error'] > 0)
             return ResponseFactory::GenerateError(Response::R_NODATA, "No file uploaded.");
 
@@ -59,11 +62,6 @@ class QewbeAPI extends API
                 'Uploaded' => $ftime
             )
         ));
-        $s3Client->waitUntil('ObjectExists', array
-        (
-            'Bucket' => QewbeAPI::DOMAIN,
-            'Key' => $current . '.' . $fext
-        ));
 
         //Add file for the user
         $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
@@ -91,6 +89,9 @@ class QewbeAPI extends API
      */
     public static function GetFiles(API $instance)
     {
+        if ($instance->Method != 'GET')
+            return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, 'Expected GET request type, received ' . $instance->Method . '.');
+
         $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
         $files = mysql_fetch_array($instance->Database->SelectRows('filelist', array( 'user_id' => $user['id'] )));
 
