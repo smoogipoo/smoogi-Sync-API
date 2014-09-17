@@ -51,6 +51,17 @@ class MYSQLInstance
         return mysql_query($sql, $this->Connection);
     }
 
+    public function SelectTable($table)
+    {
+        $this->ensureConnected();
+
+        $sql = sprintf('SELECT * FROM %s%s;'
+            , $this->schema->DB_PREFIX
+            , $this->escapeString($table));
+
+        return mysql_query($sql, $this->Connection);
+    }
+
     public function SelectRows($table, array $search)
     {
         $this->ensureConnected();
@@ -69,12 +80,15 @@ class MYSQLInstance
     {
         $this->ensureConnected();
 
-        $multiSearchString = $this->constructMultiQuery($search);
+        $multiSearchString = '';
         $multiContentsString = $this->constructMultiQuery($contents, ',');
 
         $sqlString = 'UPDATE %s SET %s';
         if ($search != null)
+        {
             $sqlString .= ' WHERE %s';
+            $multiSearchString = $this->constructMultiQuery($search);
+        }
         $sql = sprintf($sqlString, $table, $multiContentsString, $multiSearchString);
 
         return mysql_query($sql, $this->Connection);
