@@ -39,14 +39,29 @@ class QewbeAPI extends API
         $fhash = hash('sha256', $_FILES['file']['tmp_name']);
         $ftime = time();
 
-        //Increment the file
-        $current = mysql_fetch_array($instance->Database->SelectTable('qewbe'))['nextfile'];
-        //Update the filename in the DB
-        //This must be done ASAP to prevent conflicts
-        $instance->Database->UpdateRows('qewbe', array( 'nextfile' => ++$current ));
-        //Update the file counts in the DB
-        $currentFileCount = mysql_fetch_array($instance->Database->SelectTable('qewbe'))['filecount'];
-        $instance->Database->UpdateRows('qewbe', array( 'filecount' => ++$currentFileCount ));
+        $current = 'a';
+        $currentFileCount = 1;
+
+        if (mysql_num_rows($instance->Database->SelectTable('qewbe')) == 0)
+        {
+            //First file ever, woohoo!
+            $instance->Database->InsertRows('qewbe', array
+            (
+                'nextfile' => $current,
+                'filecount' => $currentFileCount
+            ));
+        }
+        else
+        {
+            //Increment the file
+            $current = mysql_fetch_array($instance->Database->SelectTable('qewbe'))['nextfile'];
+            //Update the filename in the DB
+            //This must be done ASAP to prevent conflicts
+            $instance->Database->UpdateRows('qewbe', array( 'nextfile' => ++$current ));
+            //Update the file counts in the DB
+            $currentFileCount = mysql_fetch_array($instance->Database->SelectTable('qewbe'))['filecount'];
+            $instance->Database->UpdateRows('qewbe', array( 'filecount' => ++$currentFileCount ));
+        }
 
         //Upload the file to S3
         $aws = \Aws\Common\Aws::factory('AWSConfig.php');
