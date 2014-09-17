@@ -5,6 +5,8 @@ require $BasePath . '/Schemas/Schema_Qewbe.php';
 
 class QewbeAPI extends API
 {
+    const DOMAIN = 'u.qew.be';
+
     public function __construct($request)
     {
         $instance = new MYSQLInstance(new QewbeSchema());
@@ -48,7 +50,7 @@ class QewbeAPI extends API
         $s3Client = $aws->get('s3');
         $s3Client->putObject(array
         (
-            'Bucket' => 'u.qew.be',
+            'Bucket' => QewbeAPI::DOMAIN,
             'Key' => $current . '.' . $fext,
             'SourceFile' => $_FILES['file']['tmp_name'],
             'Metadata' => array
@@ -59,7 +61,7 @@ class QewbeAPI extends API
         ));
         $s3Client->waitUntil('ObjectExists', array
         (
-            'Bucket' => 'u.qew.be',
+            'Bucket' => QewbeAPI::DOMAIN,
             'Key' => $current . '.' . $fext
         ));
 
@@ -90,6 +92,7 @@ class QewbeAPI extends API
             $file = array
             (
                 'Name' => $row['filename'],
+                'Domain' => QewbeAPI::DOMAIN,
                 'Type' => $row['type'],
                 'Hash' => $row['hash'],
                 'Uploaded' => $row['lastmodified']
