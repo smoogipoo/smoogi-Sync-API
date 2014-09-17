@@ -26,7 +26,7 @@ class ResponseFactory
     public static function GenerateError($error, $description = '')
     {
         if ($description != '')
-            return ResponseFactory::GenerateResponse(0, $error, $description);
+            return ResponseFactory::GenerateResponse(0, $error, array ( 'Error' => $description ));
         else
             return ResponseFactory::GenerateResponse(0, $error);
     }
