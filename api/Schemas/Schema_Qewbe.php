@@ -19,7 +19,7 @@ class QewbeSchema extends Schema
         'username' => 'VARCHAR(100)',
         'password' => 'VARCHAR(256)',
         'email' => 'VARCHAR(254)',
-        'lastlogin' => 'DATE',
+        'lastlogin' => 'INT UNSIGNED',
     );
 
     private $loggedInUsersTable = array
@@ -34,7 +34,7 @@ class QewbeSchema extends Schema
         'uid' => 'INT UNSIGNED',
         'filename' => 'VARCHAR(255)',
         'type' => 'VARCHAR(50)',
-        'uploaded' => 'DATE',
+        'uploaded' => 'INT UNSIGNED',
         'hash' => 'VARCHAR(256)',
     );
 
