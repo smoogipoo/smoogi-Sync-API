@@ -74,7 +74,15 @@ class QewbeAPI extends API
             'lastmodified' => $ftime,
             'hash' => $fhash
         ));
-        return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, array( 'File' => $current));
+        $file = array
+        (
+            'Name' => $current . '.' . $fext,
+            'Domain' => QewbeAPI::DOMAIN,
+            'Type' => $_FILES['file']['type'],
+            'Hash' => $fhash,
+            'Uploaded' => $ftime
+        );
+        return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, array( 'File' => $file));
     }
 
     /*
