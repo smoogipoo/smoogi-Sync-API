@@ -28,7 +28,6 @@ class QewbeAPI extends API
      */
     public static function UploadFile(API $instance)
     {
-
         if ($_FILES['file']['error'] > 0)
             return ResponseFactory::GenerateError(Response::R_NODATA, "No file uploaded.");
 
@@ -37,12 +36,12 @@ class QewbeAPI extends API
         $ftime = time();
 
         //Increment the file
-        $current = $instance->Database->SelectRows('qewbe', 'nextfile');
+        $current = mysql_fetch_array($instance->Database->SelectTable('qewbe'))['nextfile'];
         //Update the filename in the DB
         //This must be done ASAP to prevent conflicts
         $instance->Database->UpdateRows('qewbe', array( 'nextfile' => ++$current ));
         //Update the file counts in the DB
-        $currentFileCount = $instance->Database->SelectRows('qewbe', 'filecount');
+        $currentFileCount = mysql_fetch_array($instance->Database->SelectTable('qewbe'))['filecount'];
         $instance->Database->UpdateRows('qewbe', array( 'filecount' => ++$currentFileCount ));
 
         //Upload the file to S3
