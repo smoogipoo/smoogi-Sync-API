@@ -67,10 +67,11 @@ class QewbeAPI extends API
         $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
         $instance->Database->InsertRows('filelist', array
         (
+            'uid' => $user['id'],
             'filename' => $current . '.' . $fext,
             'type' => $_FILES['file']['type'],
             'user_id' => $user['id'],
-            'lastmodified' => $ftime,
+            'uploaded' => $ftime,
             'hash' => $fhash
         ));
         $file = array
@@ -104,7 +105,7 @@ class QewbeAPI extends API
                 'Domain' => QewbeAPI::DOMAIN,
                 'Type' => $row['type'],
                 'Hash' => $row['hash'],
-                'Uploaded' => $row['lastmodified']
+                'Uploaded' => $row['uploaded']
             );
             array_push($ret, array( 'File' => $file ));
         }
