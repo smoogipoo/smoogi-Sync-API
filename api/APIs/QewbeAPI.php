@@ -66,7 +66,7 @@ class QewbeAPI extends API
         ));
 
         //Add file for the user
-        $user = QewbeAPI::getUserFromToken($instance, $_POST['token']);
+        $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
         $instance->Database->InsertRows('filelist', array
         (
             'filename' => $current . '.' . $fext,
