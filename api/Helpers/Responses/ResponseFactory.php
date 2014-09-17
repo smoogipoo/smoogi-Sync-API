@@ -40,7 +40,7 @@ class ResponseFactory
             'Response' => $response,
         );
         if (!empty($data))
-            $ret['Data'] = $data;
+            $ret = array_merge($ret, $data);
         return $ret;
     }
 }
