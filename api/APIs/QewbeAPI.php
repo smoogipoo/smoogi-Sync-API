@@ -64,7 +64,7 @@ class QewbeAPI extends API
             $instance->Database->UpdateRows('qewbe', array( 'filecount' => ++$currentFileCount ));
         }
 
-        $targetFilename = $current . '.' . $ext;
+        $targetFilename = $current . $ext;
         //Add file for the user
         $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
         $instance->Database->InsertRows('filelist', array
