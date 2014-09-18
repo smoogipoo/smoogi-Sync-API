@@ -90,7 +90,7 @@ class MYSQLInstance
             $multiSearchString = $this->constructMultiQuery($search);
         }
         $sql = sprintf($sqlString, $this->schema->DB_PREFIX, $table, $multiContentsString, $multiSearchString);
-        
+
         return mysql_query($sql, $this->Connection);
     }
 

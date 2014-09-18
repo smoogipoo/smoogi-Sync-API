@@ -54,14 +54,14 @@ class QewbeAPI extends API
         }
         else
         {
-            //Increment the file
-            $current = mysql_fetch_array($instance->Database->SelectTable('qewbe'))['nextfile'];
-            //Update the filename in the DB
-            //This must be done ASAP to prevent conflicts
-            $instance->Database->UpdateRows('qewbe', array( 'nextfile' => ++$current ));
-            //Update the file counts in the DB
-            $currentFileCount = mysql_fetch_array($instance->Database->SelectTable('qewbe'))['filecount'];
-            $instance->Database->UpdateRows('qewbe', array( 'filecount' => ++$currentFileCount ));
+            $tableArr = mysql_fetch_array($instance->Database->SelectTable('qewbe'));
+            $current = $tableArr['nextfile'];
+            $currentFileCount = $tableArr['filecount'];
+            $instance->Database->UpdateRows('qewbe', array
+            (
+                'filecount' => ++$currentFileCount,
+                'nextfile' => ++$current
+            ));
         }
 
         $targetFilename = $current . $ext;
