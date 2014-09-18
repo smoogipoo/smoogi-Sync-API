@@ -21,5 +21,6 @@ class Response
     const R_LOGOUTSUCCESS		= 402;
     const R_DATACALLBACK        = 403;
     const R_NODATA              = 404;
+    const R_INVALIDDATA         = 405;
 }
 ?>
