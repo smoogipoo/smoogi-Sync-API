@@ -71,11 +71,11 @@ class QewbeAPI extends API
             'Bucket' => QewbeAPI::DOMAIN,
             'Key' => $current . '.' . $fext,
             'SourceFile' => $_FILES['file']['tmp_name'],
+            'ContentType' => $_FILES['file']['type'],
             'Metadata' => array
             (
                 'Hash' => $fhash,
                 'Uploaded' => $ftime,
-                'MimeType' => $_FILES['file']['type']
             )
         ));
 
