@@ -15,7 +15,7 @@ class QewbeAPI extends API
 
     private static function getUserFromToken(API $instance, $token)
     {
-        //Find the user ID
+        //Convert token to usename
         $loggedInUser = mysql_fetch_array($instance->Database->SelectRows('users_loggedin', array( 'token' => $token )));
         return mysql_fetch_array($instance->Database->SelectRows('users', array( 'username' => $loggedInUser['username'] )));
     }
