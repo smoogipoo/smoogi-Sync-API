@@ -1,19 +1,9 @@
 <?php
+//Please run the following command to make git ignore changes to this file
+//git update-index --assume-unchanged AWSConfig.php
 
-return array
-(
-    'includes' => array( '_aws' ),
-    'services' => array(
-        'default_settings' => array
-        (
-            'params' => array
-            (
-                'key'    => '',
-                'secret' => '',
-                'region' => 'us-west-2'
-            )
-        )
-    )
-);
+if (!class_exists('S3'))require_once('Helpers/AWS/S3.php');
+
+$s3Client = new S3('', '');
 
 ?>
