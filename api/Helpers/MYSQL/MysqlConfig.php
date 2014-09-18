@@ -1,5 +1,5 @@
 <?php
-//Please the following command to make git ignore changes to this file
+//Please run the following command to make git ignore changes to this file
 //git update-index --assume-unchanged MysqlConfig.php
 
 if (!defined('DB_HOST')) define('DB_HOST', 'localhost');

@@ -1,5 +1,5 @@
 <?php
-require_once $BasePath . '/Helpers/AWS/aws-autoloader.php';
+include($BasePath . '/AWSConfig.php');
 require_once $BasePath . '/Models/APIModel.php';
 require $BasePath . '/Schemas/Schema_Qewbe.php';
 
@@ -63,41 +63,34 @@ class QewbeAPI extends API
             $instance->Database->UpdateRows('qewbe', array( 'filecount' => ++$currentFileCount ));
         }
 
-        //Upload the file to S3
-        $aws = \Aws\Common\Aws::factory('AWSConfig.php');
-        $s3Client = $aws->get('s3');
-        $s3Client->putObject(array
-        (
-            'Bucket' => QewbeAPI::DOMAIN,
-            'Key' => $current . '.' . $fext,
-            'SourceFile' => $_FILES['file']['tmp_name'],
-            'ContentType' => $_FILES['file']['type'],
-            'Metadata' => array
-            (
-                'Hash' => $fhash,
-                'Uploaded' => $ftime,
-            )
-        ));
+        global $s3Client;
+        $targetFilename = $current . '.' . $fext;
+        $fileData = $_FILES['file']['tmp_name'];
+        $contentType = $_FILES['file']['type'];
 
-        //Add file for the user
-        $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
-        $instance->Database->InsertRows('filelist', array
-        (
-            'uid' => $user['id'],
-            'filename' => $current . '.' . $fext,
-            'type' => $_FILES['file']['type'],
-            'uploaded' => $ftime,
-            'hash' => $fhash
-        ));
-        $file = array
-        (
-            'Name' => $current . '.' . $fext,
-            'Domain' => QewbeAPI::DOMAIN,
-            'Type' => $_FILES['file']['type'],
-            'Hash' => $fhash,
-            'Uploaded' => $ftime
-        );
-        return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, array( 'File' => $file));
+        if ($s3Client->putObject($fileData, QewbeAPI::DOMAIN, $targetFilename, S3::ACL_PUBLIC_READ, array(), $contentType))
+        {
+            //Add file for the user
+            $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
+            $instance->Database->InsertRows('filelist', array
+            (
+                'uid' => $user['id'],
+                'filename' => $targetFilename,
+                'type' => $contentType,
+                'uploaded' => $ftime,
+                'hash' => $fhash
+            ));
+            $file = array
+            (
+                'Name' => $targetFilename,
+                'Domain' => QewbeAPI::DOMAIN,
+                'Type' => $contentType,
+                'Hash' => $fhash,
+                'Uploaded' => $ftime
+            );
+            return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, array( 'File' => $file));
+        }
+        return ResponseFactory::GenerateError(Response::R_NODATA, 'Upload failed.');
     }
 
     /*
