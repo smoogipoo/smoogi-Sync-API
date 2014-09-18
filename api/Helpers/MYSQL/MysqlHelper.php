@@ -83,14 +83,14 @@ class MYSQLInstance
         $multiSearchString = '';
         $multiContentsString = $this->constructMultiQuery($contents, ',');
 
-        $sqlString = 'UPDATE %s%s SET %s';
+        $sqlString = 'UPDATE %s%s SET %s;';
         if ($search != null)
         {
             $sqlString .= ' WHERE %s';
             $multiSearchString = $this->constructMultiQuery($search);
         }
         $sql = sprintf($sqlString, $this->schema->DB_PREFIX, $table, $multiContentsString, $multiSearchString);
-
+        
         return mysql_query($sql, $this->Connection);
     }
 
@@ -141,13 +141,13 @@ class MYSQLInstance
         return mysql_real_escape_string($data);
     }
 
-    private function constructMultiQuery(array $data, $splitter = '=')
+    private function constructMultiQuery(array $data, $splitter = ' AND ')
     {
         $ret = '';
         foreach ($data as $k => $v)
         {
             if ($ret !== '')
-                $ret .= ' AND ';
+                $ret .= $splitter;
             $ret .= $this->escapeString($k) . '=' . "'" . $this->escapeString($v) . "'";
         }
         return $ret;
