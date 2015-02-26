@@ -5,12 +5,13 @@ class Response
     //Generic information errors
     const E_NOSERVICE 			= 0;
     const E_NOCREDENTIALS 		= 1;
-    const E_INVALIDCREDENTIALS = 2;
+    const E_INVALIDCREDENTIALS  = 2;
     const E_INVALIDTOKEN		= 3;
     const E_USEREXISTS			= 4;
     const E_INVALIDEMAIL		= 5;
     const E_EMPTYCREDENTIALS	= 6;
     const E_NOTLOGGEDIN         = 7;
+    const E_FILEDOESNTEXIST     = 8;
     //System errors
     const E_INVALIDMETHOD       = -3;
     const E_INVALIDREQUESTTYPE	= -2;

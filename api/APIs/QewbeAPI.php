@@ -22,6 +22,8 @@ class QewbeAPI extends API
 
     /*
      * Updates and returns the next file.
+     * method: GET
+     * params: ext, hash, type,
      */
     public static function UploadFile(API $instance)
     {
@@ -85,7 +87,24 @@ class QewbeAPI extends API
     }
 
     /*
-     * Returns all the files for the user that exist in AWS.
+     * Deletes a user's file.
+     * method: GET
+     * params: hash
+     */
+    public static function RemoveFile(API $instance)
+    {
+        if ($instance->Method != 'GET')
+            return ResponseFactory::GenerateError(Resposne::E_INVALIDREQUESTTYPE, 'Expected GET request type, received' . $instance->Method . '.');
+
+        $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
+        if (!$instance->Database->DeleteRows('filelist', array( 'Hash' => $_GET['hash'] )))
+            return ResponseFactory::GenerateError(Response::E_FILEDOESNTEXIST, 'The requested file hash doesn\'t exist.');
+        return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, 'File deleted.')
+    }
+
+    /*
+     * Returns all the files for the user.
+     * method: GET
      */
     public static function GetFiles(API $instance)
     {
