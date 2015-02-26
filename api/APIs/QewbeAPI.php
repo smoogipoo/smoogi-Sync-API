@@ -21,9 +21,7 @@ class QewbeAPI extends API
     }
 
     /*
-     * Uploads a file to S3 and returns the filename.
-     * Adds the filename to the database and increment
-     * the in-database tracking variables.
+     * Updates and returns the next file.
      */
     public static function UploadFile(API $instance)
     {
