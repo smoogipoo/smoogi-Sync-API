@@ -44,14 +44,14 @@ class QewbeSchema extends Schema
         mysql_select_db($this->DB_NAME);
 
         //Create the main table
-        mysql_query($this->generateCreateTableQuery('Qewbe', $this->qewbeTable), $database);
+        mysql_query($this->generateCreateTableQuery('qewbe', $this->qewbeTable), $database);
 
         //Create the users tables
-        mysql_query($this->generateCreateTableQuery('Users', $this->usersTable), $database);
-        mysql_query($this->generateCreateTableQuery('Users_LoggedIn', $this->loggedInUsersTable), $database);
+        mysql_query($this->generateCreateTableQuery('users', $this->usersTable), $database);
+        mysql_query($this->generateCreateTableQuery('users_loggedin', $this->loggedInUsersTable), $database);
 
         //Create the FileList table
-        mysql_query($this->generateCreateTableQuery('FileList', $this->fileListTable), $database);
+        mysql_query($this->generateCreateTableQuery('filelist', $this->fileListTable), $database);
     }
 }
 

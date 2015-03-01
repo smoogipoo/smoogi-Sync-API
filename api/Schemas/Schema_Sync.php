@@ -36,11 +36,11 @@ class SyncSchema extends Schema
         mysql_select_db($this->DB_NAME);
 
         //Create the users tables
-        mysql_query($this->generateCreateTableQuery('Users', $this->usersTable), $database);
-        mysql_query($this->generateCreateTableQuery('Users_LoggedIn', $this->loggedInUsersTable), $database);
+        mysql_query($this->generateCreateTableQuery('users', $this->usersTable), $database);
+        mysql_query($this->generateCreateTableQuery('users_loggedin', $this->loggedInUsersTable), $database);
 
         //Create the FileList table
-        mysql_query($this->generateCreateTableQuery('FileList', $this->fileListTable), $database);
+        mysql_query($this->generateCreateTableQuery('filelist', $this->fileListTable), $database);
         $fkey = "ALTER TABLE `sync_filelist` ADD CONSTRAINT `user_id` FOREIGN KEY (`id`) REFERENCES `sync_users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;";
         mysql_query($fkey, $database);
     }
