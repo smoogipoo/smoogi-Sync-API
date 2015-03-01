@@ -1,10 +1,7 @@
 <?php
 require 'APIConfig.php';
-require 'APIs/SyncAPI.php';
-require 'APIs/QewbeAPI.php';
-
-if (!array_key_exists('HTTP_ORIGIN', $_SERVER))
-    $_SERVER['HTTP_ORIGIN'] = $_SERVER['SERVER_NAME'];
+require $BasePath . '/APIs/SyncAPI.php';
+require $BasePath . '/APIs/QewbeAPI.php';
 
 try
 {

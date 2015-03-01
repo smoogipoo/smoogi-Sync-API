@@ -99,7 +99,7 @@ class QewbeAPI extends API
         $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
         if (!$instance->Database->DeleteRows('filelist', array( 'Hash' => $_GET['hash'] )))
             return ResponseFactory::GenerateError(Response::E_FILEDOESNTEXIST, 'The requested file hash doesn\'t exist.');
-        return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, 'File deleted.')
+        return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, 'File deleted.');
     }
 
     /*
