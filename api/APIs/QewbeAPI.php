@@ -38,6 +38,8 @@ class QewbeAPI extends API
         }
 
         $ext = $_GET['ext'];
+        if (strlen($ext) > 0 && $ext[0] != '.')
+            $ext = '.' . $ext;
         $ftime = time();
 
         $current = 'a';
