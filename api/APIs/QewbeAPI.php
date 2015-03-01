@@ -91,7 +91,7 @@ class QewbeAPI extends API
     /*
      * Deletes a user's file.
      * method: GET
-     * params: hash
+     * params: name
      */
     public static function RemoveFile(API $instance)
     {
@@ -99,7 +99,7 @@ class QewbeAPI extends API
             return ResponseFactory::GenerateError(Resposne::E_INVALIDREQUESTTYPE, 'Expected GET request type, received' . $instance->Method . '.');
 
         $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
-        if (!$instance->Database->DeleteRows('filelist', array( 'Hash' => $_GET['hash'] )))
+        if (!$instance->Database->DeleteRows('filelist', array( 'filename' => $_GET['name'], 'uid' => $user['id'])))
             return ResponseFactory::GenerateError(Response::E_FILEDOESNTEXIST, 'The requested file hash doesn\'t exist.');
         return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, 'File deleted.');
     }
