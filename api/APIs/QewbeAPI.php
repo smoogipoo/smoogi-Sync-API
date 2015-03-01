@@ -125,7 +125,7 @@ class QewbeAPI extends API
                 'Hash' => $row['hash'],
                 'Uploaded' => $row['uploaded']
             );
-            array_push($ret, array( 'File' => $file ));
+            array_push($ret, $file);
         }
         return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, array( 'Files' => $ret ));
     }
