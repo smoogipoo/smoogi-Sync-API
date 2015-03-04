@@ -4,7 +4,7 @@ require $BasePath . '/Schemas/Schema_Qewbe.php';
 
 class QewbeAPI extends API
 {
-    const DOMAIN = 'http://qew.be/';
+    const DOMAIN = 'http://smgi.me/Sync/api/uploads';
 
     public function __construct($request)
     {
