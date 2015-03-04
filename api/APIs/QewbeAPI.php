@@ -4,7 +4,7 @@ require $BasePath . '/Schemas/Schema_Qewbe.php';
 
 class QewbeAPI extends API
 {
-    const DOMAIN = 'http://smgi.me/Sync/api/uploads';
+    const DOMAIN = 'http://smgi.me/Sync/Uploads';
 
     public function __construct($request)
     {
@@ -73,7 +73,7 @@ class QewbeAPI extends API
         $targetFilename = $current . $ext;
 
         $hash = hash_file('sha256', $_FILES['file']['tmp_name']);
-        if (!move_uploaded_file($_FILES['file']['tmp_name'], sprintf($BasePath . '/uploads/%s', $targetFilename)))
+        if (!move_uploaded_file($_FILES['file']['tmp_name'], sprintf($BasePath . '/../Uploads/%s', $targetFilename)))
         	return ResponseFactory::GenerateError(Response::E_INTERNALERROR, 'Moving file failed.');
 
         //Add file for the user
