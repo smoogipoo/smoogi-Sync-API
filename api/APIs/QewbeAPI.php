@@ -4,7 +4,7 @@ require $BasePath . '/Schemas/Schema_Qewbe.php';
 
 class QewbeAPI extends API
 {
-    const DOMAIN = 'u.qew.be';
+    const DOMAIN = 'http://qew.be/';
 
     public function __construct($request)
     {
@@ -27,19 +27,21 @@ class QewbeAPI extends API
      */
     public static function UploadFile(API $instance)
     {
-        if ($instance->Method != 'GET')
-            return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, 'Expected GET request type, received ' . $instance->Method . '.');
+        if ($instance->Method != 'POST')
+            return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, 'Expected POST request type, received ' . $instance->Method . '.');
 
-        if (!isset($_GET['ext'])
-            || !isset($_GET['hash'])
-            || !isset($_GET['type']))
-        {
-            return ResponseFactory::GenerateError(Response::R_INVALIDDATA, 'File extension, hash or type is missing.');
-        }
+        if (!isset($FILES['file'])
+        	return ResponseFactory::GenerateError(Response::R_INVALIDDATA, 'File is missing.');
 
-        $ext = $_GET['ext'];
-        if (strlen($ext) > 0 && $ext[0] != '.')
-            $ext = '.' . $ext;
+        if (!isset($_FILES['file']['name']) || strrpos($_FILES['file']['name'], '.') == FALSE)
+        	return ResponseFactory::GenerateError(Response::R_INVALIDDATA, 'File name or extension is missing.');
+
+        if (!isset($_FILES['file']['type']))
+        	return ResponseFactory::GenerateError(Response::R_INVALIDDATA, 'Mime type is missing');
+
+        $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
+
+        $ext = substr($_FILES['file']['name'], strrpos($_FILES['file']['name'], '.'));
         $ftime = time();
 
         $current = 'a';
@@ -67,16 +69,21 @@ class QewbeAPI extends API
         }
 
         $targetFilename = $current . $ext;
+
+        $hash = hash_file('sha256', $_FILES['file']['tmp_name']);
+        if (!move_uploaded_file($_FILES['file']['tmp_name'], sprintf('./uploads/%s', $targetFilename)))
+        	return ResponseFactory::GenerateError(Response::E_INTERNALERROR, 'Moving file failed.');
+
         //Add file for the user
-        $user = QewbeAPI::getUserFromToken($instance, $_GET['token']);
         $instance->Database->InsertRows('filelist', array
         (
             'uid' => $user['id'],
             'filename' => $targetFilename,
-            'type' => $_GET['type'],
+            'type' => $_FILES['file']['type'],
             'uploaded' => $ftime,
             'hash' => $_GET['hash']
         ));
+
         $file = array
         (
             'Name' => $targetFilename,
@@ -85,6 +92,7 @@ class QewbeAPI extends API
             'Hash' => $_GET['hash'],
             'Uploaded' => $ftime
         );
+
         return ResponseFactory::GenerateResponse(1, Response::R_DATACALLBACK, array( 'File' => $file));
     }
 

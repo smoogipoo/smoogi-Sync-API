@@ -13,6 +13,7 @@ class Response
     const E_NOTLOGGEDIN         = 7;
     const E_FILEDOESNTEXIST     = 8;
     //System errors
+    const E_INTERNALERROR       = -100;
     const E_INVALIDMETHOD       = -3;
     const E_INVALIDREQUESTTYPE	= -2;
     const E_NORETURN			= -1;
