@@ -27,10 +27,12 @@ class QewbeAPI extends API
      */
     public static function UploadFile(API $instance)
     {
+    	global $BasePath;
+
         if ($instance->Method != 'POST')
             return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, 'Expected POST request type, received ' . $instance->Method . '.');
 
-        if (!isset($FILES['file'])
+        if (!isset($_FILES['file']))
         	return ResponseFactory::GenerateError(Response::R_INVALIDDATA, 'File is missing.');
 
         if (!isset($_FILES['file']['name']) || strrpos($_FILES['file']['name'], '.') == FALSE)
@@ -71,7 +73,7 @@ class QewbeAPI extends API
         $targetFilename = $current . $ext;
 
         $hash = hash_file('sha256', $_FILES['file']['tmp_name']);
-        if (!move_uploaded_file($_FILES['file']['tmp_name'], sprintf('./uploads/%s', $targetFilename)))
+        if (!move_uploaded_file($_FILES['file']['tmp_name'], sprintf($BasePath . '/uploads/%s', $targetFilename)))
         	return ResponseFactory::GenerateError(Response::E_INTERNALERROR, 'Moving file failed.');
 
         //Add file for the user
@@ -81,15 +83,15 @@ class QewbeAPI extends API
             'filename' => $targetFilename,
             'type' => $_FILES['file']['type'],
             'uploaded' => $ftime,
-            'hash' => $_GET['hash']
+            'hash' => $hash
         ));
 
         $file = array
         (
             'Name' => $targetFilename,
             'Domain' => QewbeAPI::DOMAIN,
-            'Type' => $_GET['type'],
-            'Hash' => $_GET['hash'],
+            'Type' => $_FILES['file']['type'],
+            'Hash' => $hash,
             'Uploaded' => $ftime
         );
 
