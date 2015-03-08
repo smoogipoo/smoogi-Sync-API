@@ -28,7 +28,7 @@ class QewbeAPI extends API
      */
     public static function UploadFile(API $instance)
     {
-    	global $UploadPath;
+    	global $UploadFilePath;
 
         if ($instance->Method != 'POST')
             return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, 'Expected POST request type, received ' . $instance->Method . '.');
@@ -74,7 +74,7 @@ class QewbeAPI extends API
         $targetFilename = $current . $ext;
 
         $hash = hash_file('sha256', $_FILES['file']['tmp_name']);
-        if (!move_uploaded_file($_FILES['file']['tmp_name'], sprintf($UploadPath, $targetFilename)))
+        if (!move_uploaded_file($_FILES['file']['tmp_name'], sprintf($UploadFilePath, $targetFilename)))
         	return ResponseFactory::GenerateError(Response::E_INTERNALERROR, 'Moving file failed.');
 
         //Add file for the user

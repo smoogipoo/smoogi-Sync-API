@@ -1,3 +1,4 @@
 <?php
 $BasePath = getcwd();
-$UploadPath = $BasePath . '/../%s';
+$UploadPath = $BasePath . '/../Store';
+$UploadFilePath = $UploadPath . '/%s';
