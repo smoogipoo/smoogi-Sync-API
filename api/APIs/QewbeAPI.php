@@ -1,6 +1,7 @@
 <?php
 require_once $BasePath . '/Models/APIModel.php';
 require $BasePath . '/Schemas/Schema_Qewbe.php';
+require_once $BasePath . '/Helpers/RNG.php';
 
 class QewbeAPI extends API
 {
@@ -61,12 +62,12 @@ class QewbeAPI extends API
         else
         {
             $tableArr = mysql_fetch_array($instance->Database->SelectTable('qewbe'));
-            $current = $tableArr['nextfile'];
+            $current = RNG::IncrementalString($tableArr['nextfile'], RNG::ALPHANUMERICAL);
             $currentFileCount = $tableArr['filecount'];
             $instance->Database->UpdateRows('qewbe', array
             (
                 'filecount' => ++$currentFileCount,
-                'nextfile' => ++$current
+                'nextfile' => $current
             ));
         }
 
