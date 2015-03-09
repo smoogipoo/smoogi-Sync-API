@@ -1,5 +1,5 @@
 <?php
-if (!defined('BASE_PATH')) define('BASE_PATH', getcwd());
+if (!defined('BASE_PATH')) define('BASE_PATH', dirname(__FILE__));
 if (!defined('UPLOAD_PATH')) define('UPLOAD_PATH', BASE_PATH . '/../Store');
 if (!defined('UPLOAD_PATH_FILE')) define('UPLOAD_PATH_FILE', UPLOAD_PATH . '/%s');
 if (!defined('TEMP_PATH')) define('TEMP_PATH', BASE_PATH . '/../tmp');
