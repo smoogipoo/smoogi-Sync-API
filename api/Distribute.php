@@ -1,8 +1,8 @@
 <?php
 
 require 'APIConfig.php';
-require $BasePath . '/Helpers/S3/S3.php';
-require $BasePath . '/Helpers/S3/S3Config.php';
+require BASE_PATH . '/Helpers/S3/S3.php';
+require BASE_PATH . '/Helpers/S3/S3Config.php';
 
 $s3Client = new S3(AWS_KEY, AWS_SECRET);
 $db = new MYSQLInstance(new QewbeSchema());
@@ -22,13 +22,12 @@ function distributeFolder($dir)
 
 function distributeFile($file)
 {
-	global $UploadPath;
 	global $Buckets;
 	global $s3Client;
 
 	foreach ($Buckets as $bucket)
 	{
-		$fName = ltrim(str_replace($UploadPath, '', $file), '/');
+		$fName = ltrim(str_replace(UPLOAD_PATH, '', $file), '/');
 
 		if ($s3Client->putObject($s3Client->inputFile($file, false), $bucket, $fName))
 			addFileLocation($fName, $bucket);
@@ -109,7 +108,7 @@ function addFileLocation($fileName, $bucket)
 }
 
 //Distribute initial files
-distributeFolder($UploadPath);
+distributeFolder(UPLOAD_PATH);
 
 //Resync all buckets
 reSync();

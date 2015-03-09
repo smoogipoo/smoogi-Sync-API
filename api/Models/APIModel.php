@@ -1,7 +1,7 @@
 <?php
-require_once $BasePath . '/Helpers/Responses/ResponseFactory.php';
-require_once $BasePath . '/Helpers/MYSQL/MysqlHelper.php';
-require_once $BasePath . '/Helpers/RNG.php';
+require_once BASE_PATH . '/Helpers/Responses/ResponseFactory.php';
+require_once BASE_PATH . '/Helpers/MYSQL/MysqlHelper.php';
+require_once BASE_PATH . '/Helpers/RNG.php';
 
 abstract class API
 {

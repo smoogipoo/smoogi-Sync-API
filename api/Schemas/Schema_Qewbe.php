@@ -1,5 +1,5 @@
 <?php
-require_once $BasePath . '/Schemas/Schema_Base.php';
+require_once BASE_PATH . '/Schemas/Schema_Base.php';
 
 class QewbeSchema extends Schema
 {

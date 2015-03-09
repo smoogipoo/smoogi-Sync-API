@@ -1,6 +1,6 @@
 <?php
-require_once $BasePath . '/Models/APIModel.php';
-require $BasePath . '/Schemas/Schema_Sync.php';
+require_once BASE_PATH . '/Models/APIModel.php';
+require BASE_PATH . '/Schemas/Schema_Sync.php';
 
 class SyncAPI extends API
 {

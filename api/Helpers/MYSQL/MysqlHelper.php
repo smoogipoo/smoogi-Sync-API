@@ -1,5 +1,5 @@
 <?php
-require $BasePath . '/Helpers/MYSQL/MysqlConfig.php';
+require BASE_PATH . '/Helpers/MYSQL/MysqlConfig.php';
 
 class MYSQLInstance
 {

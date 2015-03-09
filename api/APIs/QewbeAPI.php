@@ -1,7 +1,7 @@
 <?php
-require_once $BasePath . '/Models/APIModel.php';
-require $BasePath . '/Schemas/Schema_Qewbe.php';
-require_once $BasePath . '/Helpers/RNG.php';
+require_once BASE_PATH . '/Models/APIModel.php';
+require BASE_PATH . '/Schemas/Schema_Qewbe.php';
+require_once BASE_PATH . '/Helpers/RNG.php';
 
 class QewbeAPI extends API
 {
@@ -28,8 +28,6 @@ class QewbeAPI extends API
      */
     public static function UploadFile(API $instance)
     {
-    	global $UploadFilePath;
-
         if ($instance->Method != 'POST')
             return ResponseFactory::GenerateError(Response::E_INVALIDREQUESTTYPE, 'Expected POST request type, received ' . $instance->Method . '.');
 
@@ -74,7 +72,7 @@ class QewbeAPI extends API
         $targetFilename = $current . $ext;
 
         $hash = hash_file('sha256', $_FILES['file']['tmp_name']);
-        if (!move_uploaded_file($_FILES['file']['tmp_name'], sprintf($UploadFilePath, $targetFilename)))
+        if (!move_uploaded_file($_FILES['file']['tmp_name'], sprintf(UPLOAD_PATH_FILE, $targetFilename)))
         	return ResponseFactory::GenerateError(Response::E_INTERNALERROR, 'Moving file failed.');
 
         //Add file for the user

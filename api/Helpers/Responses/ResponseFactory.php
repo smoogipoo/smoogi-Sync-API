@@ -1,5 +1,5 @@
 <?php
-require $BasePath . '/Helpers/Responses/Response.php';
+require BASE_PATH . '/Helpers/Responses/Response.php';
 
 class ResponseFactory
 {

@@ -45,7 +45,7 @@ else
 	foreach ($locs as $bucket)
 	{
 		//Download the object from the first bucket
-		$f = sprintf($TempString, RNG::FixedString(256, RNG::ALPHANUMERICAL));
+		$f = sprintf(TEMP_PATH_FILE, RNG::FixedString(256, RNG::ALPHANUMERICAL));
 		if ($s3Client->getObject($bucket, $file, $f))
 		{
 			returnFile($f);

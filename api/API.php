@@ -1,7 +1,7 @@
 <?php
 require 'APIConfig.php';
-require $BasePath . '/APIs/SyncAPI.php';
-require $BasePath . '/APIs/QewbeAPI.php';
+require BASE_PATH . '/APIs/SyncAPI.php';
+require BASE_PATH . '/APIs/QewbeAPI.php';
 
 try
 {
