@@ -36,6 +36,7 @@ class QewbeSchema extends Schema
         'type' => 'VARCHAR(50)',
         'uploaded' => 'INT UNSIGNED',
         'hash' => 'VARCHAR(256)',
+        'locations' => 'VARCHAR(256)'
     );
 
     public function CreateSchema($database)

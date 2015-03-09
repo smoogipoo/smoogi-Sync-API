@@ -5,6 +5,7 @@ require $BasePath . '/Helpers/S3/S3.php';
 require $BasePath . '/Helpers/S3/S3Config.php';
 
 $s3Client = new S3(AWS_KEY, AWS_SECRET);
+$db = new MYSQLInstance(new QewbeSchema());
 
 function distributeFolder($dir)
 {
@@ -29,7 +30,9 @@ function distributeFile($file)
 	{
 		$fName = ltrim(str_replace($UploadPath, '', $file), '/');
 
-		if (!$s3Client->putObject($s3Client->inputFile($file, false), $bucket, $fName))
+		if ($s3Client->putObject($s3Client->inputFile($file, false), $bucket, $fName))
+			addFileLocation($fName, $bucket);
+		else
 			error_log("Failed to move $file into $bucket.");
 	}
 }
@@ -79,14 +82,30 @@ function reSync()
 
 	//Copy missing files over between buckets
 	foreach ($diff as $fromBucket => $toArray)
-		foreach ($toArray as $toBucket => $files)
-			foreach ($files as $file)
-				$s3Client->copyObject($fromBucket, $file['name'], $toBucket, $file['name']);
+	foreach ($toArray as $toBucket => $files)
+	foreach ($files as $file)
+	{
+		$s3Client->copyObject($fromBucket, $file['name'], $toBucket, $file['name']);
+		addFileLocation($file['name'], $toBucket);
+	}
 }
 
 function getDiff($list1, $list2)
 {
 	return array_diff(array_merge($list1, $list2), $list2);
+}
+
+/*
+ * Adds a resource location for the file in the database.
+ */
+function addFileLocation($fileName, $bucket)
+{
+	$locs = mysql_fetch_array($db->SelectRowsLimit('filelist', array( 'name' => $fileName), 1))['locations'];
+	if (strpos($locs, $bucket) == FALSE)
+	{
+		$locs .= ",$bucket";
+		$db->UpdateRows('filelist', array( 'locations' => $locs), array( 'name' => $fileName));
+	}	
 }
 
 //Distribute initial files
