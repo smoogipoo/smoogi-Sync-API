@@ -1,8 +1,8 @@
 <?php
 
-require 'APIConfig.php';
-require BASE_PATH . '/Helpers/S3/S3.php';
-require BASE_PATH . '/Helpers/S3/S3Config.php';
+require_once 'APIConfig.php';
+require_once BASE_PATH . '/Helpers/S3/S3.php';
+require_once BASE_PATH . '/Helpers/S3/S3Config.php';
 
 $s3Client = new S3(AWS_KEY, AWS_SECRET);
 $db = new MYSQLInstance(new QewbeSchema());

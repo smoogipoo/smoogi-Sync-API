@@ -1,6 +1,6 @@
 <?php
 require_once BASE_PATH . '/Models/APIModel.php';
-require BASE_PATH . '/Schemas/Schema_Qewbe.php';
+require_once BASE_PATH . '/Schemas/Schema_Qewbe.php';
 require_once BASE_PATH . '/Helpers/RNG.php';
 
 class QewbeAPI extends API
