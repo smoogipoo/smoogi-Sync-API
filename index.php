@@ -23,7 +23,7 @@ $db = new MYSQLInstance(new QewbeSchema());
 $dbRes = $db->SelectRowsLimit('filelist', array('filename' => $file), 1);
 
 //If we have no DB results, assume file doesn't exist and exit
-if (mysql_num_rows($dbRes < 1))
+if (mysql_num_rows($dbRes) < 1)
 {
 	header($protocol . ' 404 Not Found');
 	$GLOBALS['http_response_code'] = 404;
@@ -32,11 +32,12 @@ if (mysql_num_rows($dbRes < 1))
 
 $locs = explode(',', mysql_fetch_array($dbRes)['locations']);
 
+header($protocol . ' 200 OK');
 header('Content-Type: ' . mysql_fetch_array($dbRes)['type']);
 
 //If no locations, file hasn't been distributed, check locally
-if (count($locs) == 0 || $locs[0] == '')
-	returnFile(sprintf($UploadString, $file));
+if (count($locs) == 0 || empty($locs[0]))
+	returnFile(sprintf(UPLOAD_PATH_FILE, $file));
 else
 {
 	//Todo: We could probably regionize this for best performance.
