@@ -83,12 +83,14 @@ class MYSQLInstance
         $multiSearchString = '';
         $multiContentsString = $this->constructMultiQuery($contents, ',');
 
-        $sqlString = 'UPDATE %s%s SET %s;';
+        $sqlString = 'UPDATE %s%s SET %s';
         if ($search != null)
         {
-            $sqlString .= ' WHERE %s';
+            $sqlString .= ' WHERE %s;';
             $multiSearchString = $this->constructMultiQuery($search);
         }
+        else
+            $sqlString .= ';';
         $sql = sprintf($sqlString, $this->schema->DB_PREFIX, $table, $multiContentsString, $multiSearchString);
 
         return mysql_query($sql, $this->Connection);
