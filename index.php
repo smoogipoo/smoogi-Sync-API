@@ -1,5 +1,5 @@
 <?php
-require_once 'api/APIConfig.php';
+require_once './api/APIConfig.php';
 require_once BASE_PATH . '/Helpers/MYSQL/MysqlHelper.php';
 require_once BASE_PATH . '/Helpers/RNG.php'; 
 require_once BASE_PATH . '/Schemas/Schema_Qewbe.php';
@@ -15,7 +15,7 @@ function returnFile($file)
 //Todo: MYSQL blob-cache for files
 
 $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
-$file = $_GET['res'];
+$file = ltrim($_GET['res'], '/');
 
 $s3Client = new S3(AWS_KEY, AWS_SECRET);
 $db = new MYSQLInstance(new QewbeSchema());
@@ -36,7 +36,7 @@ header($protocol . ' 200 OK');
 header('Content-Type: ' . mysql_fetch_array($dbRes)['type']);
 
 //If no locations, file hasn't been distributed, check locally
-if (count($locs) == 0 || empty($locs[0]))
+if (count($locs) == 0)
 	returnFile(sprintf(UPLOAD_PATH_FILE, $file));
 else
 {
@@ -45,12 +45,18 @@ else
 	$bucket = 0;
 	foreach ($locs as $bucket)
 	{
-		//Download the object from the first bucket
-		$f = sprintf(TEMP_PATH_FILE, RNG::FixedString(256, RNG::ALPHANUMERICAL));
-		if ($s3Client->getObject($bucket, $file, $f))
+		if (empty($bucket))
+			continue;
+		try
 		{
-			returnFile($f);
-			break;
+			//Download the object from the first bucket
+			$f = sprintf(TEMP_PATH_FILE, RNG::FixedString(24, RNG::ALPHANUMERICAL));
+			if ($s3Client->getObject($bucket, $file, $f))
+			{
+				returnFile($f);
+				break;
+			}
 		}
+		catch (Exception $e) { }
 	}
 }

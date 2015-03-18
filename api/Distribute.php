@@ -1,6 +1,8 @@
 <?php
 
 require_once 'APIConfig.php';
+require_once BASE_PATH . '/Helpers/MYSQL/MysqlHelper.php';
+require_once BASE_PATH . '/Schemas/Schema_Qewbe.php';
 require_once BASE_PATH . '/Helpers/S3/S3.php';
 require_once BASE_PATH . '/Helpers/S3/S3Config.php';
 
@@ -14,9 +16,15 @@ function distributeFolder($dir)
 	{
 		$loc = $dir . DIRECTORY_SEPARATOR . $v;
 		if (is_dir($loc))
+		{
 			distributeFolder($loc);
+			rmdir($loc);
+		}
 		else
+		{
 			distributeFile($loc);
+			unlink($loc);
+		}
 	}
 }
 
@@ -99,12 +107,13 @@ function getDiff($list1, $list2)
  */
 function addFileLocation($fileName, $bucket)
 {
-	$locs = mysql_fetch_array($db->SelectRowsLimit('filelist', array( 'name' => $fileName), 1))['locations'];
+	global $db;
+	$locs = mysql_fetch_array($db->SelectRowsLimit('filelist', array( 'filename' => $fileName), 1))['locations'];
 	if (strpos($locs, $bucket) == FALSE)
 	{
 		$locs .= ",$bucket";
-		$db->UpdateRows('filelist', array( 'locations' => $locs), array( 'name' => $fileName));
-	}	
+		$db->UpdateRows('filelist', array( 'locations' => $locs), array( 'filename' => $fileName));
+	}
 }
 
 //Distribute initial files
